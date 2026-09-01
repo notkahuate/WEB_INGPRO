@@ -1,0 +1,511 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "INGPRO Suppliers — Productos y Secciones Strapi",
+    "description": "API Strapi 4 para consultar, crear y actualizar productos y secciones CMS. Base: https://sales.ingprosuppliers.com. Escritura con Bearer token. El {id} de productos y secciones es el ID numérico de Strapi, no item_id.",
+    "version": "2.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://sales.ingprosuppliers.com"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/productos": {
+      "get": {
+        "operationId": "listarProductos",
+        "summary": "Listar productos",
+        "description": "Lista productos Strapi. Usar filtros para buscar por item_id, sku o name. Aumentar pagination[pageSize] hasta 100 si no aparece. El id numérico está en data[].id; los campos en data[].attributes.",
+        "parameters": [
+          {
+            "name": "filters[item_id][$eq]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Filtrar por item_id exacto del catálogo."
+          },
+          {
+            "name": "filters[sku][$eq]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "filters[name][$containsi]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "Buscar por nombre (contiene, sin distinguir mayúsculas)."
+          },
+          {
+            "name": "pagination[page]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "pagination[pageSize]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25, "maximum": 100 }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "id:desc" }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "*" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de productos { data, meta }" }
+        }
+      },
+      "post": {
+        "operationId": "crearProducto",
+        "summary": "Crear producto",
+        "description": "Crea un producto. Body obligatorio: { data: { ... } }. item_id es obligatorio y único.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProductoRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Producto creado" },
+          "201": { "description": "Producto creado" },
+          "400": { "description": "Datos incorrectos o item_id duplicado" },
+          "401": { "description": "No autorizado" }
+        }
+      }
+    },
+    "/api/productos/{id}": {
+      "get": {
+        "operationId": "obtenerProducto",
+        "summary": "Obtener producto por ID numérico",
+        "description": "id = ID numérico Strapi (data.id), NO item_id.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID numérico del producto en Strapi.",
+            "schema": { "type": "integer" }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "*" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Producto { data: { id, attributes } }" },
+          "404": { "description": "No encontrado" }
+        }
+      },
+      "put": {
+        "operationId": "actualizarProducto",
+        "summary": "Actualizar producto",
+        "description": "Actualiza campos dentro de data. JSON de description, especificaciones y tablas se reemplaza entero: primero GET y conserva lo no pedido. id numérico en la URL.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID numérico del producto en Strapi.",
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ProductoRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Producto actualizado" },
+          "400": { "description": "Datos incorrectos" },
+          "401": { "description": "No autorizado" },
+          "404": { "description": "No encontrado" }
+        }
+      }
+    },
+    "/api/secciones": {
+      "get": {
+        "operationId": "listarSecciones",
+        "summary": "Listar secciones CMS",
+        "description": "Lista secciones. Filtrar por producto: filters[producto][id][$eq]=ID o filters[producto][item_id][$eq]=ITEM_ID. Ordenar sort=orden:asc. populate=imagenes,producto.",
+        "parameters": [
+          {
+            "name": "filters[producto][id][$eq]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer" },
+            "description": "ID numérico del producto."
+          },
+          {
+            "name": "filters[producto][item_id][$eq]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" },
+            "description": "item_id de catálogo del producto."
+          },
+          {
+            "name": "filters[titulo][$containsi]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "orden:asc" }
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "imagenes,producto" }
+          },
+          {
+            "name": "pagination[page]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 1 }
+          },
+          {
+            "name": "pagination[pageSize]",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "integer", "default": 25, "maximum": 100 }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de secciones { data, meta }" }
+        }
+      },
+      "post": {
+        "operationId": "crearSeccion",
+        "summary": "Crear sección CMS y asignarla a un producto",
+        "description": "Crea una sección. titulo es obligatorio. producto debe ser el ID NUMÉRICO del producto Strapi (no item_id). orden entero (1,2,3...). imagenes opcionales como array de IDs de media ya subidos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SeccionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Sección creada" },
+          "201": { "description": "Sección creada" },
+          "400": { "description": "Datos incorrectos" },
+          "401": { "description": "No autorizado" }
+        }
+      }
+    },
+    "/api/secciones/{id}": {
+      "get": {
+        "operationId": "obtenerSeccion",
+        "summary": "Obtener sección CMS por ID numérico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID numérico de la sección."
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "imagenes,producto" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Sección encontrada" },
+          "404": { "description": "No encontrada" }
+        }
+      },
+      "put": {
+        "operationId": "actualizarSeccion",
+        "summary": "Editar sección CMS o reasignarla a otro producto",
+        "description": "Actualiza titulo, informacion, orden y/o producto. Para reasignar: data.producto = ID numérico del producto destino.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID numérico de la sección."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SeccionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Sección actualizada" },
+          "400": { "description": "Datos incorrectos" },
+          "401": { "description": "No autorizado" },
+          "404": { "description": "No encontrada" }
+        }
+      }
+    },
+    "/api/secciones/producto/{itemId}": {
+      "get": {
+        "operationId": "obtenerSeccionesPorItemId",
+        "summary": "Secciones CMS de un producto por item_id",
+        "description": "Mismo endpoint que usa la web. itemId es el item_id de catálogo (string), no el id numérico. Devuelve secciones ordenadas con imágenes.",
+        "parameters": [
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" },
+            "description": "item_id del producto, ejemplo Q347TEH."
+          },
+          {
+            "name": "populate",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "imagenes" }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": { "type": "string", "example": "orden:asc" }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Lista de secciones del producto" },
+          "400": { "description": "itemId requerido" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Token"
+      }
+    },
+    "schemas": {
+      "ProductoRequest": {
+        "type": "object",
+        "required": ["data"],
+        "additionalProperties": false,
+        "properties": {
+          "data": { "$ref": "#/components/schemas/ProductoData" }
+        }
+      },
+      "ProductoData": {
+        "type": "object",
+        "description": "Campos del producto. En POST, item_id es obligatorio. En PUT envía solo lo que cambia, excepto JSON (description, especificaciones, tablas) que se envían completos.",
+        "properties": {
+          "item_id": { "type": "string", "description": "Código único de catálogo. Obligatorio al crear." },
+          "name": { "type": "string" },
+          "description": { "$ref": "#/components/schemas/Description" },
+          "brand": { "type": "string" },
+          "rate": { "type": "number" },
+          "stock_on_hand": { "type": "integer" },
+          "sku": { "type": "string" },
+          "status": { "type": "string" },
+          "cf_marca": { "type": "string" },
+          "cf_t_entrega": { "type": "string" },
+          "cf_garant_a": { "type": "string" },
+          "cf_codigo": { "type": "string" },
+          "cf_categoria": { "type": "string" },
+          "cf_subcategoria": { "type": "string" },
+          "cf_item": { "type": "string" },
+          "cf_category": { "type": "string" },
+          "cf_codigo_categoria": { "type": "string" },
+          "cf_en_el_paquete": { "type": "string" },
+          "origen": { "type": "string" },
+          "imagen_url": { "type": "string", "description": "URL de la imagen principal. No borrar si el usuario no lo pide." },
+          "image_name": { "type": "string" },
+          "imagenes_url": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "URLs de galería. Los links viejos se conservan si no se envía este campo."
+          },
+          "config_options": { "type": "object", "additionalProperties": true },
+          "datasheet_url": { "type": "string" },
+          "categoria": { "type": "string" },
+          "user_manual": { "type": "string", "description": "URL del manual principal." },
+          "manuales_url": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "URLs de todos los manuales."
+          },
+          "quickstart_url": { "type": "string" },
+          "especificaciones": { "$ref": "#/components/schemas/Especificaciones" },
+          "tablas": { "$ref": "#/components/schemas/Tablas" },
+          "created_time": { "type": "string", "format": "date-time" },
+          "last_modified_time": { "type": "string", "format": "date-time" }
+        },
+        "additionalProperties": true
+      },
+      "SeccionRequest": {
+        "type": "object",
+        "required": ["data"],
+        "additionalProperties": false,
+        "properties": {
+          "data": { "$ref": "#/components/schemas/SeccionData" }
+        }
+      },
+      "SeccionData": {
+        "type": "object",
+        "description": "Sección CMS. titulo obligatorio al crear. producto = ID numérico del producto Strapi.",
+        "properties": {
+          "titulo": { "type": "string" },
+          "informacion": {
+            "type": "string",
+            "description": "Texto o markdown simple. Listas 1. 2. 3. se ven bien en la web."
+          },
+          "orden": {
+            "type": "integer",
+            "description": "Orden de aparición. 1 arriba."
+          },
+          "producto": {
+            "type": "integer",
+            "description": "ID numérico Strapi del producto al que se asigna. NUNCA uses item_id aquí."
+          },
+          "imagenes": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "description": "IDs numéricos de archivos ya subidos en Media Library. No envíes URLs ni binarios aquí."
+          }
+        },
+        "additionalProperties": true
+      },
+      "Description": {
+        "type": "object",
+        "description": "JSON de la pestaña Descripción del producto. NO es la collection Seccion.",
+        "properties": {
+          "titulo": { "$ref": "#/components/schemas/Idioma" },
+          "secciones": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/DescriptionSeccion" }
+          }
+        },
+        "additionalProperties": true
+      },
+      "DescriptionSeccion": {
+        "type": "object",
+        "properties": {
+          "tipo": { "type": "string", "example": "texto" },
+          "contenido": { "$ref": "#/components/schemas/Idioma" }
+        },
+        "additionalProperties": true
+      },
+      "Especificaciones": {
+        "type": "object",
+        "required": ["especificaciones"],
+        "properties": {
+          "especificaciones": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Especificacion" }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Especificacion": {
+        "type": "object",
+        "required": ["nombre", "valor"],
+        "properties": {
+          "nombre": { "$ref": "#/components/schemas/Idioma" },
+          "valor": { "$ref": "#/components/schemas/Idioma" }
+        },
+        "additionalProperties": false
+      },
+      "Idioma": {
+        "type": "object",
+        "required": ["es", "en"],
+        "properties": {
+          "es": { "type": "string" },
+          "en": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "Tablas": {
+        "type": "object",
+        "properties": {
+          "tablas": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Tabla" }
+          },
+          "repuestos": { "$ref": "#/components/schemas/Repuestos" }
+        },
+        "additionalProperties": true
+      },
+      "Tabla": {
+        "type": "object",
+        "required": ["titulo", "columnas", "filas"],
+        "properties": {
+          "titulo": { "type": "string" },
+          "columnas": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "filas": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "Repuestos": {
+        "type": "object",
+        "properties": {
+          "titulo": { "type": "string" },
+          "parts": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/RepuestoPart" }
+          }
+        },
+        "additionalProperties": true
+      },
+      "RepuestoPart": {
+        "type": "object",
+        "properties": {
+          "fig": { "type": "string" },
+          "figure_title": { "type": "string" },
+          "image": { "type": "string" },
+          "find_no": { "type": "string" },
+          "part_no": { "type": "string" },
+          "part_name": { "type": "string" },
+          "system": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    }
+  }
+}

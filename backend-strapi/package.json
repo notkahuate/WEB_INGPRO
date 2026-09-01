@@ -1,0 +1,34 @@
+{
+  "name": "backend-strapi",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Panel CMS para gestionar productos, clientes y cotizaciones INGPRO",
+  "scripts": {
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "build": "strapi build",
+    "strapi": "strapi",
+    "import:products": "node scripts/import-products.js",
+    "import:sql": "node scripts/import-from-sql.js"
+  },
+  "dependencies": {
+    "@strapi/admin": "^4.25.23",
+    "@strapi/plugin-i18n": "4.25.23",
+    "@strapi/plugin-users-permissions": "4.25.23",
+    "@strapi/strapi": "4.25.23",
+    "better-sqlite3": "11.3.0",
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.11.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^5.3.4",
+    "styled-components": "^5.3.11"
+  },
+  "engines": {
+    "node": ">=18.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "623dabf5-93fb-4346-a431-820631b4b083"
+  }
+}

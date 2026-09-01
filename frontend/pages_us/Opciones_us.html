@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure product | INGPRO Suppliers</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="/css/opciones.css?v=20260823d">
+    <link rel="stylesheet" href="/css/site-layout.css?v=20260831b">
+    <link rel="icon" type="image/png" href="/img/image.png" />
+</head>
+<body>
+
+    <!-- 🌟 Search popup -->
+    <div id="searchModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Do you have any specific product configuration?</h2>
+            <h3 id="modalProductName"></h3>
+            <input type="text" id="productSearchInput" placeholder="Type here what you want to search..." />
+            
+            <button id="acceptConfigBtn" class="modal-accept-btn">
+                Accept configuration
+            </button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="https://ingprosuppliers.com"><img src="https://ingprosuppliers.com/imagenes/logo_blanco.png" alt="TEquipment Logo" class="logo" style="width: 150px;">
+            </a>
+            <button type="button" class="menu-toggle" id="menuToggle" aria-controls="header-right" aria-expanded="false">☰</button>
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by SKU, Brand, Department, Keyword">
+                <button type="button" aria-label="Search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="header-right">
+                <div class="contact-info">
+                    <a  href="https://wa.me/14842634627" class="phone">+1 (484) 263-4627</a><br>
+                    <a href="mailto:Sales@TEquipment.NET" class="email">sales@ingprosuppliers.com</a>
+                </div>
+
+                
+                    
+            <a href="/pages_us/login_us.html" class="account-link">
+                <span aria-hidden="true">👤</span>
+                <div>
+                    <strong>My Account</strong><br>
+                    <small>Hello, Sign In</small>
+                </div>
+            </a>
+
+            <div class="language-switch">
+                <button type="button" id="openLangModal">🌐 Language</button>
+            </div>
+
+                <a href="/pages_us/carrito_us.html">
+                        <span class="cart-count" id="cartCount">Cart (0)</span>
+                    </a>
+               
+            </div>
+        </div>
+    </header>
+
+    
+
+    <nav class="navbar site-navbar" id="navbar" aria-label="Main navigation">
+                <div class="navbar-inner" id="primaryMenu">
+            <a href="/pages_us/Home_us.html" class="nav-item" data-nav-section="inicio">Home</a>
+            <a href="/pages_us/productos_us.html?section=inicio" class="nav-item active" data-nav-section="productos">Products</a>
+            <a href="https://wa.me/14842634627" class="nav-item">Contact</a>
+        </div>
+    </nav>
+
+    <div class="section-breadcrumb" id="sectionBreadcrumb" aria-label="Current location">
+        <div class="section-breadcrumb-inner">
+            <nav class="section-breadcrumb-track" aria-label="Navigation path">
+                <ol id="sectionBreadcrumbList"></ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <a href="/pages_us/compras_us.html" class="back-link">← Back to Product Details</a>
+
+        <div class="configurator-container">
+            <div class="options-panel">
+                <h1>Select Options</h1>
+
+                <div class="message-container"></div>
+                <div class="option-sections"></div>
+
+                <div class="config-navigation">
+                    <button id="prevBtn">⬅ Back</button>
+                    <button id="nextBtn">Next ➡</button>
+                </div>
+            </div>
+
+            <div class="summary-panel">
+                <div class="product-summary">
+                    <div class="product-image">
+                        <img src="" alt="Rosemount 3051T">
+                    </div>
+
+                    <h2 class="product-title">Rosemount 3051T Pressure Transmitter</h2>
+
+                    <div class="configured-part">
+                        <label>Configured part number</label>
+                        <div class="part-number">3051TG0A2A21A</div>
+                    </div>
+
+                    <a href="/pages_us/carrito_us.html">
+                        <button class="add-to-cart-btn">Request a Quote</button>
+                    </a>
+
+                    <button class="action-btn">
+                        📄 I Have a Configuration
+                    </button>
+
+                    <div class="need-help">
+                        <strong>Need help?</strong>
+                        Call one of our engineers at 
+                        <a h href="https://wa.me/14842634627" >+1 (484) 263-4627</a>. 
+                        We're open 8:00 am to 5:00 pm ET.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-container">
+            <h2>We’d love to hear from you.</h2>
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <h3>📞 +1 (484) 263-4627</h3>
+                </div>
+                <div class="contact-method">
+                    <h3>✉️ Send us an Email</h3>
+                    <p>Email: sales@ingprosuppliers.com</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+   <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h4>My Account</h4>
+                <ul>
+                    <li><a href="#">My Account</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">International Orders</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Payment Options</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Promotions & Offers</h4>
+                <ul>
+                    <li><a href="#">Clearance</a></li>
+                    <li><a href="#">Promotions</a></li>
+                    <li><a href="#">Product Demos</a></li>
+                    <li><a href="#">Government / Educational Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#">Save on Test Equipment</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Credit Application</a></li>
+                    <li><a href="#">RMA Form</a></li>
+                    <li><a href="#">Terms and Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Company</h4>
+                <div class="footer-logo">
+                    <img src="/img/image.png" alt="TEquipment">
+                </div>
+                <div class="company-info">
+                    <p style="font-size: 16px; color: #666; margin-bottom: 10px;">INGPRO SUPPLIERS LLC</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">30 N Gould St, Sheridan, WY 82801</p>
+                    <a href="#">Contact Us</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/14842634627?text=Hola%20quiero%20informacion%20sobre%20un%20producto" class="whatsapp-float" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
+       alt="WhatsApp" 
+       style="width: 50px;">
+</a>
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqebc6767e8ffe35fdd92310b182b489b11ab65582f4c2562b92f1527c39b11172" defer></script>
+<script src="/js/opciones_us.js?v=20260823d"></script>
+
+    
+
+
+
+<!-- Language modal -->
+<div id="languageModal" class="lang-modal" role="dialog" aria-modal="true" aria-labelledby="langModalTitle" hidden>
+  <div class="lang-modal-content">
+    <button type="button" class="lang-close" id="closeLangModal" aria-label="Close">&times;</button>
+    <h2 id="langModalTitle">🌍 Select your language</h2>
+    <p>Which language would you like to view the site in?</p>
+    <div class="lang-buttons">
+      <button type="button" class="lang-btn" data-lang="es">🇪🇸 Spanish</button>
+      <button type="button" class="lang-btn" data-lang="en">🇺🇸 English</button>
+    </div>
+  </div>
+</div>
+
+    <script src="/js/site-layout.js?v=20260831b" defer></script>
+</body>
+</html>

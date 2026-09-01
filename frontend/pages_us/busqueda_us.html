@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search results | INGPRO Suppliers</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="stylesheet" href="/css/styles_search.css">
+    <link rel="stylesheet" href="/css/site-layout.css?v=20260831b">
+    <link rel="icon" type="image/png" href="/img/image.png" />
+</head>
+<body>
+     <header class="header">
+        <div class="header-container">
+            <a href="https://ingprosuppliers.com"><img src="https://ingprosuppliers.com/imagenes/logo_blanco.png" alt="TEquipment Logo" class="logo" style="width: 150px;">
+            </a>
+
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+            
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Search by SKU, Brand, Department, Keyword">
+                <button type="button" aria-label="Search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+                <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="header-right">
+                <div class="contact-info">
+                    <a  href="https://wa.me/14842634627" class="phone">+1 (484) 263-4627</a><br>
+                    <a href="mailto:Sales@TEquipment.NET" class="email">sales@ingprosuppliers.com</a>
+                </div>
+
+                <a href="/pages_us/login_us.html" class="account-link">
+                <span aria-hidden="true">👤</span>
+                <div>
+                    <strong>My Account</strong><br>
+                    <small>Hello, Sign In</small>
+                </div>
+            </a>
+
+            <div class="language-switch">
+                <button type="button" id="openLangModal">🌐 Language</button>
+            </div>
+
+                <a href="/pages_us/carrito_us.html">
+                        <span class="cart-count" id="cartCount">Cart (0)</span>
+                    </a>
+            </div>
+        </div>
+    </header>
+
+     
+
+    <nav class="navbar site-navbar" id="navbar" aria-label="Main navigation">
+                <div class="navbar-inner" id="primaryMenu">
+            <a href="/pages_us/Home_us.html" class="nav-item" data-nav-section="inicio">Home</a>
+            <a href="/pages_us/productos_us.html?section=inicio" class="nav-item active" data-nav-section="productos">Products</a>
+            <a href="https://wa.me/14842634627" class="nav-item">Contact</a>
+        </div>
+    </nav>
+
+    <div class="section-breadcrumb" id="sectionBreadcrumb" aria-label="Current location">
+        <div class="section-breadcrumb-inner">
+            <nav class="section-breadcrumb-track" aria-label="Navigation path">
+                <ol id="sectionBreadcrumbList"></ol>
+            </nav>
+        </div>
+    </div>
+    <div class="breadcrumb">
+        <a href="#">Home</a> > Search Results: Fluke Sound Beacon
+    </div>
+
+    <div class="main-content">
+        <aside id="filters">
+            <h2>Filters</h2>
+
+           <div class="filter-section">
+          <h3>Marca</h3>
+          <div class="filter-content">
+             <label><input type="checkbox" name="brand" value="FLUKE"> FLUKE</label>
+            <label><input type="checkbox" name="brand" value="CAT"> CAT</label>
+            <label><input type="checkbox" name="brand" value="INGPRO"> INGPRO</label>
+            <label><input type="checkbox" name="brand" value="EMERSON"> EMERSON</label>
+            <label><input type="checkbox" name="brand" value="Tentech"> Tentech</label>
+            <label><input type="checkbox" name="brand" value="KYORITSU"> KYORITSU</label>
+            <label><input type="checkbox" name="brand" value="LAPMASTER"> LAPMASTER</label>
+
+            <label><input type="checkbox" name="brand" value="COMET"> COMET</label>
+            <label><input type="checkbox" name="brand" value="TWECO"> TWECO</label>
+            <label><input type="checkbox" name="brand" value="YOKOGAWA"> YOKOGAWA</label>
+            <label><input type="checkbox" name="brand" value="PARKER"> PARKER</label>
+            <label><input type="checkbox" name="brand" value="FAMECA"> FAMECA</label>
+            <label><input type="checkbox" name="brand" value="GENERAC"> GENERAC</label>
+            <label><input type="checkbox" name="brand" value="KLUBER"> KLUBER</label>
+
+            <label><input type="checkbox" name="brand" value="TUFF BUCKET"> TUFF BUCKET</label>
+            <label><input type="checkbox" name="brand" value="ELCOMETER"> ELCOMETER</label>
+            <label><input type="checkbox" name="brand" value="ENERPAC"> ENERPAC</label>
+            <label><input type="checkbox" name="brand" value="GORE"> GORE</label>
+            <label><input type="checkbox" name="brand" value="QLIGHT"> QLIGHT</label>
+            <label><input type="checkbox" name="brand" value="OFMER"> OFMER</label>
+            <label><input type="checkbox" name="brand" value="EDILGRAPPA"> EDILGRAPPA</label>
+
+            <label><input type="checkbox" name="brand" value="TRIMBLE"> TRIMBLE</label>
+            <label><input type="checkbox" name="brand" value="METREL"> METREL</label>
+            <label><input type="checkbox" name="brand" value="BAKER HUGHES"> BAKER HUGHES</label>
+            <label><input type="checkbox" name="brand" value="STREAMLIGHT"> STREAMLIGHT</label>
+            <label><input type="checkbox" name="brand" value="VEGA"> VEGA</label>
+            <label><input type="checkbox" name="brand" value="KUBOTA"> KUBOTA</label>
+
+            <label><input type="checkbox" name="brand" value="COPPUS"> COPPUS</label>
+            <label><input type="checkbox" name="brand" value="GENERICA"> GENERICA</label>
+            <label><input type="checkbox" name="brand" value="UNIT T"> UNIT T</label>
+
+            <label><input type="checkbox" name="brand" value="DEEP SEA"> DEEP SEA</label>
+            <label><input type="checkbox" name="brand" value="ESAB"> ESAB</label>
+            <label><input type="checkbox" name="brand" value="LEISTER"> LEISTER</label>
+            <label><input type="checkbox" name="brand" value="PERKINS"> PERKINS</label>
+          </div>
+        </div>
+
+            <button id="apply-filters" class="btn-apply">Apply Filters</button>
+        </aside>
+
+        <main class="products-area">
+            <div id="products-container"></div>
+            <div id="pagination" class="pagination"></div>
+        </main>
+    </div>
+    
+    <a href="https://wa.me/14842634627?text=Hola%20quiero%20informacion%20sobre%20un%20producto" class="whatsapp-float" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
+       alt="WhatsApp" 
+       style="width: 50px;">
+</a>
+
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqebc6767e8ffe35fdd92310b182b489b11ab65582f4c2562b92f1527c39b11172" defer></script>
+<script src="/js/busqueda_us.js"></script>
+
+
+
+<!-- Language modal -->
+<div id="languageModal" class="lang-modal" role="dialog" aria-modal="true" aria-labelledby="langModalTitle" hidden>
+  <div class="lang-modal-content">
+    <button type="button" class="lang-close" id="closeLangModal" aria-label="Close">&times;</button>
+    <h2 id="langModalTitle">🌍 Select your language</h2>
+    <p>Which language would you like to view the site in?</p>
+    <div class="lang-buttons">
+      <button type="button" class="lang-btn" data-lang="es">🇪🇸 Spanish</button>
+      <button type="button" class="lang-btn" data-lang="en">🇺🇸 English</button>
+    </div>
+  </div>
+</div>
+
+    <script src="/js/site-layout.js?v=20260831b" defer></script>
+</body>
+</html>

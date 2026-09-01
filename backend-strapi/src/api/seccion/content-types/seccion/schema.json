@@ -1,0 +1,39 @@
+{
+  "kind": "collectionType",
+  "collectionName": "secciones",
+  "info": {
+    "singularName": "seccion",
+    "pluralName": "secciones",
+    "displayName": "Seccion",
+    "description": "Secciones de contenido e imágenes vinculadas a un producto"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "titulo": {
+      "type": "string",
+      "required": true
+    },
+    "informacion": {
+      "type": "richtext"
+    },
+    "imagenes": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"]
+    },
+    "orden": {
+      "type": "integer",
+      "default": 0
+    },
+    "producto": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::producto.producto",
+      "inversedBy": "secciones"
+    }
+  }
+}

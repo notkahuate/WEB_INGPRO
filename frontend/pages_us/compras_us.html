@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="index, follow">
+    <title>Product | INGPROSUPPLIERS</title>
+    <link rel="stylesheet" href="/css/compras.css?v=20260826a">
+    <link rel="stylesheet" href="/css/site-layout.css?v=20260831b">
+    <link rel="icon" type="image/png" href="/img/image.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <a href="https://ingprosuppliers.com"><img src="https://ingprosuppliers.com/imagenes/logo_blanco.png" alt="TEquipment Logo" class="logo" style="width: 150px;">
+            </a>
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+           <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by SKU, Brand, Department, Keyword">
+            <button type="button" aria-label="Search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+            <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="header-right">
+                <div class="contact-info">
+                    <a  href="https://wa.me/14842634627" class="phone">+1 (484) 263-4627</a><br>
+                    <a href="mailto:Sales@TEquipment.NET" class="email">sales@ingprosuppliers.com</a>
+                </div>
+
+
+                 
+                 
+            <a href="/pages_us/login_us.html" class="account-link">
+                <span aria-hidden="true">👤</span>
+                <div>
+                    <strong>My Account</strong><br>
+                    <small>Hello, Sign In</small>
+                </div>
+            </a>
+
+            <div class="language-switch">
+                <button type="button" id="openLangModal">🌐 Language</button>
+            </div>
+
+                <a href="/pages_us/carrito_us.html"><span class="cart-count" id="cartCount">Carrito (0)</span></a>
+            
+            </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+   
+<nav class="navbar site-navbar" id="navbar" aria-label="Main navigation">
+                <div class="navbar-inner" id="primaryMenu">
+            <a href="/pages_us/Home_us.html" class="nav-item" data-nav-section="inicio">Home</a>
+            <a href="/pages_us/productos_us.html?section=inicio" class="nav-item active" data-nav-section="productos">Products</a>
+            <a href="https://wa.me/14842634627" class="nav-item">Contact</a>
+        </div>
+    </nav>
+
+  <div class="section-breadcrumb" id="sectionBreadcrumb" aria-label="Current location">
+        <div class="section-breadcrumb-inner">
+            <nav class="section-breadcrumb-track" aria-label="Navigation path">
+                <ol id="sectionBreadcrumbList"></ol>
+            </nav>
+        </div>
+    </div>
+    
+
+    <div class="tabs-sticky" id="stickyTabs" aria-hidden="true">
+        <div class="tabs-sticky-inner">
+            <button type="button" class="tab-button sticky-tab-btn active" data-target="description"><span>DESCRIPTION</span></button>
+            <button type="button" class="tab-button sticky-tab-btn js-specs-tab" data-target="specs" hidden><span>SPECIFICATIONS</span></button>
+            <button type="button" class="tab-button sticky-tab-btn" data-target="inbox"><span>IN THE PACKAGE</span></button>
+            <button type="button" class="tab-button sticky-tab-btn" data-target="manuals"><span>MANUALS / GUIDES</span></button>
+            <button type="button" class="tab-button sticky-tab-btn js-cms-secciones-tab" data-target="cms-secciones" hidden><span>SECTIONS</span></button>
+            <button type="button" class="tab-button sticky-tab-btn" data-target="tablas" hidden><span>TABLES</span></button>
+            <a href="/pages_us/Opciones_us.html" class="sticky-action">Request Quote</a>
+        </div>
+    </div>
+
+    <div class="compras-page-content">
+    <!-- Product Detail -->
+    <div class="product-detail">
+        <div class="product-layout">
+            <section class="product-info-main" id="product-info">
+                <div class="product-eyebrow" id="product-eyebrow" hidden></div>
+                <h1 class="product-title" id="product-name">Loading name...</h1>
+                <p class="product-lead" id="product-lead" hidden></p>
+            </section>
+
+            <section class="gallery">
+                <div class="product-images">
+                    <div class="main-image">
+                        <img src="" alt="Product Image">
+                    </div>
+                    <div class="thumbnail-gallery"></div>
+                </div>
+            </section>
+
+            <aside class="purchase-box">
+                <div class="price-box">
+                    <h3 class="quote-card-title">Commercial sheet</h3>
+                    <div class="quote-card-meta">
+                        <div class="meta-row">
+                            <span class="meta-label">ID:</span>
+                            <span id="product-item-id">—</span>
+                        </div>
+                        <div class="meta-row">
+                            <span class="meta-label">Brand:</span>
+                            <span id="product-brand">Loading brand...</span>
+                        </div>
+                        <div class="meta-row product-origin-row" id="product-origin-row" hidden>
+                            <span class="meta-label">Origin:</span>
+                            <span id="product-country" class="product-country-badge"></span>
+                        </div>
+                        <div class="meta-row meta-row--sku">
+                            <span class="meta-label">SKU:</span>
+                            <span id="product-sku">Loading SKU...</span>
+                        </div>
+                    </div>
+                    <div class="purchase-actions">
+                        <a href="/pages_us/Opciones_us.html" class="add-to-cart-btn btn-primary">Request A Quote</a>
+                        <button type="button" class="btn btn-secondary js-goto-tablas" hidden>View technical tables</button>
+                    </div>
+                </div>
+
+                <div class="expert-help side-box">
+                    <div class="expert-avatar"><img src="/img/image.png" alt=""></div>
+                    <div class="expert-info">
+                        <h4>Do you have any questions?</h4>
+                        <div class="expert-links">
+                            <a href="https://wa.me/14842634627">+1 (484) 263-4627</a> |
+                            <a href="mailto:sales@ingprosuppliers.com">sales@ingprosuppliers.com</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="note-box">
+                    <strong>Important:</strong> Specifications and certifications must be validated with the manufacturer's official documentation.
+                </div>
+            </aside>
+        </div>
+
+        <div id="product-specs-preview" class="product-specs-preview" hidden></div>
+
+        <div class="tabs-static-wrapper" id="tabsTrigger">
+            <div class="tabs-section">
+                <div class="tabs-header">
+                    <button type="button" class="tab-button active" data-target="description">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <span>DESCRIPTION</span>
+                    </button>
+                    <button type="button" class="tab-button js-specs-tab" data-target="specs" hidden>
+                        <i class="fa-solid fa-list-check"></i>
+                        <span>SPECIFICATIONS</span>
+                    </button>
+                    <button type="button" class="tab-button" data-target="inbox">
+                        <i class="fa-solid fa-box-open"></i>
+                        <span>IN THE PACKAGE</span>
+                    </button>
+                    <button type="button" class="tab-button" data-target="manuals">
+                        <i class="fa-solid fa-book"></i>
+                        <span>MANUALS / GUIDES</span>
+                    </button>
+                    <button type="button" class="tab-button js-cms-secciones-tab" data-target="cms-secciones" hidden>
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>SECTIONS</span>
+                    </button>
+                    <button type="button" class="tab-button" data-target="tablas" hidden>
+                        <i class="fa-solid fa-table"></i>
+                        <span>TABLES</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+                <div id="description" class="tab-content section active">
+            <div class="section-content">
+                <h2>Description</h2>
+                <div class="content-text">
+                <h3 id="description-title" hidden></h3>
+                <ul id="product-features" class="product-features">
+                    <li>Product description not available.</li>
+                </ul>
+                </div>
+            </div>
+            </div>
+
+
+            <div id="specs" class="tab-content section" hidden>
+                <div class="section-content">
+                    <h2>Specifications</h2>
+                    <p class="specs-tab-intro">Key technical characteristics of this product.</p>
+                    <div id="specsContainer" class="specs-container" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div id="inbox" class="tab-content section">
+                <div class="section-content">
+                    <h2>In the Package</h2>
+                    <div id="inbox-content" class="info-card info-card--package" aria-live="polite"></div>
+                </div>
+            </div>
+
+           <div id="manuals" class="tab-content section">
+  <div class="section-content">
+    <h2>Manuals / Guides</h2>
+    <div id="manualsContainer" class="info-card-grid" aria-live="polite"></div>
+  </div>
+</div>
+
+           <div id="cms-secciones" class="tab-content section" hidden>
+  <div class="section-content">
+    <h2>Additional sections</h2>
+    <div id="cmsSeccionesContainer" class="cms-secciones-container" aria-live="polite"></div>
+  </div>
+</div>
+
+             <div id="tablas" class="tab-content section" hidden>
+  <div class="tables-tab-panel">
+    <div class="tables-tab-header">
+      <h2>Technical tables</h2>
+      <p class="tables-tab-intro">Technical data and, when available, spare parts with figures.</p>
+    </div>
+    <div id="tablasContainer" class="tables-container" aria-live="polite"></div>
+  </div>
+</div>
+
+        <div class="series-section section">
+  <h2>Products in This Brand</h2>
+  <div class="table-wrap series-table-wrap">
+  <table class="series-table spec-data-table">
+    <thead>
+      <tr>
+        <th>Product</th>
+        <th>Brand</th>
+      </tr>
+    </thead>
+    <tbody id="seriesTableBody">
+      <!-- Aquí se insertarán los productos dinámicamente -->
+    </tbody>
+  </table>
+  </div>
+    </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="contact-section">
+        <div class="contact-container">
+            <h2 class="contact-header">We would love to hear from you.</h2>
+            
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <h3>📞 +1 (484) 263-4627</h3>
+                </div>
+                <div class="contact-method">
+                    <h3>✉️ Send us an Email</h3>
+                    <p style="font-size: 14px; color: #666;">Email: sales@ingprosuppliers.com</p>
+                </div>
+              
+            </div>
+
+        </div>
+
+        </div>
+    </div>
+
+    <div class="social-section">
+        <h2>Get Connected</h2>
+        <p>Join the community and find out what we're up to, experience live product releases, webinars and more!</p>
+        
+    </div>
+
+    
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-columns">
+                <div class="footer-column">
+                    <h3>My Account</h3>
+                    <ul>
+                        <li><a href="#">My Account</a></li>
+                        <li><a href="#">Shipping</a></li>
+                        <li><a href="#">Returns</a></li>
+                        <li><a href="#">International Orders</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Payment Options</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Promotions & Offers</h3>
+                    <ul>
+                        <li><a href="#">Clearance</a></li>
+                        <li><a href="#">Promotions</a></li>
+                        <li><a href="#">Product Demos</a></li>
+                        <li><a href="#">Government / Educational Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Save on Test Equipment</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Credit Application</a></li>
+                        <li><a href="#">RMA Form</a></li>
+                        <li><a href="#">Terms and Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column footer-logo-section">
+                    <h3>Company</h3>
+                    <img src="/img/image.png" alt="TEquipment Logo" class="footer-logo" style="width: 21vh;">
+                    <div class="footer-address">
+                      <p style="font-size: 16px; color: #666; margin-bottom: 10px;">INGPRO SUPPLIERS LLC</p>
+            <p style="font-size: 14px; color: #666; margin-bottom: 15px;">30 N Gould St, Sheridan, WY 82801</p>
+                        <a href="#">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+   <a href="https://wa.me/14842634627?text=Hola%20quiero%20informacion%20sobre%20un%20producto"
+   class="whatsapp-float"
+   target="_blank">
+
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png"
+       alt="WhatsApp"
+       style="width:50px;height:50px;">
+</a>
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqebc6767e8ffe35fdd92310b182b489b11ab65582f4c2562b92f1527c39b11172" defer></script>
+<script src="/js/Categorias_us.js"></script>
+    <script src="/js/marcasPaises.js"></script>
+    <script src="/js/industrias.js"></script>
+    <script src="/js/compras_us.js?v=20260901a"></script>
+
+
+
+
+<!-- Language modal -->
+<div id="languageModal" class="lang-modal" role="dialog" aria-modal="true" aria-labelledby="langModalTitle" hidden>
+  <div class="lang-modal-content">
+    <button type="button" class="lang-close" id="closeLangModal" aria-label="Close">&times;</button>
+    <h2 id="langModalTitle">🌍 Select your language</h2>
+    <p>Which language would you like to view the site in?</p>
+    <div class="lang-buttons">
+      <button type="button" class="lang-btn" data-lang="es">🇪🇸 Spanish</button>
+      <button type="button" class="lang-btn" data-lang="en">🇺🇸 English</button>
+    </div>
+  </div>
+</div>
+
+    <script src="/js/site-layout.js?v=20260831b" defer></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+{
+  "kind": "collectionType",
+  "collectionName": "clientes",
+  "info": {
+    "singularName": "cliente",
+    "pluralName": "clientes",
+    "displayName": "Cliente",
+    "description": "Usuarios registrados del sitio (equivalente a tabla usuarios)"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "legacy_id": {
+      "type": "integer",
+      "unique": true
+    },
+    "nombre": {
+      "type": "string",
+      "required": true
+    },
+    "apellido": {
+      "type": "string"
+    },
+    "email": {
+      "type": "email",
+      "required": true,
+      "unique": true
+    },
+    "telefono": {
+      "type": "string"
+    },
+    "pais": {
+      "type": "string"
+    },
+    "estado_provincia": {
+      "type": "string"
+    },
+    "direccion": {
+      "type": "text"
+    },
+    "nombre_empresa": {
+      "type": "string"
+    },
+    "codigo_postal": {
+      "type": "string"
+    },
+    "ciudad": {
+      "type": "string"
+    },
+    "password_hash": {
+      "type": "string",
+      "private": true
+    },
+    "rol": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string"
+    },
+    "creado_en": {
+      "type": "datetime"
+    }
+  }
+}

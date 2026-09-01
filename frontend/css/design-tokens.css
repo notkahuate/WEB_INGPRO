@@ -1,0 +1,264 @@
+/* Gama azul tecnológica basada en ejemplo.css (#2638da, #0066cc, #0052a3, #003d7a, #004a9f) */
+:root {
+  --font-sans: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+
+  /* Cabecera oscura corporativa (ejemplo.css INGPRO) — contraste con logo blanco */
+  --gradient-header-main: linear-gradient(
+    90deg,
+    #020814 0%,
+    #02307b 32%,
+    #004be4 62%,
+    #02307b 82%,
+    #020814 100%
+  );
+  --color-header-border: rgba(41, 182, 246, 0.22);
+  --color-header-text: #ffffff;
+  --color-header-link: #ddeeff;
+  --color-header-link-hover: #ffffff;
+  /* Buscador “vidrio” difuminado sobre la cabecera */
+  --search-bar-glass-bg: rgba(255, 255, 255, 0.1);
+  --search-bar-glass-border: rgba(41, 182, 246, 0.38);
+  --search-bar-glass-shadow: inset 0 0 18px rgba(255, 255, 255, 0.04),
+    0 0 18px rgba(41, 182, 246, 0.15);
+
+  /* Fondo: gris-azulado ligero (aspecto tech / producto) */
+  --gradient-page: linear-gradient(180deg, #f3f6fc 0%, #e8eef8 100%);
+
+  /* Primario sólido (botón clásico del ejemplo) */
+  --color-primary-btn: #2638da;
+  --color-primary-btn-hover: #1b2cbd;
+  --color-primary-glow: rgba(38, 56, 218, 0.35);
+  /* Gradiente “tech” del bloque .search-bar del ejemplo.css (#004BE4 → #29B6F6) */
+  --gradient-search-tech: linear-gradient(135deg, #004be4 0%, #0077ff 55%, #29b6f6 100%);
+  --shadow-search-glow: 0 0 18px rgba(41, 182, 246, 0.42);
+  --shadow-search-glow-hover: 0 0 26px rgba(41, 182, 246, 0.55);
+
+  /* Enlaces y estados (ejemplo) */
+  --color-interactive: #0066cc;
+  --color-interactive-hover: #0052a3;
+  --color-interactive-soft: #d6e8fc;
+  --color-interactive-muted: #7eb8e8;
+  --gradient-interactive-deep: linear-gradient(135deg, #0052a3 0%, #003d7a 100%);
+
+  /* Barra nav: azul oscuro tecnológico (sustituye el gris #585858 del ejemplo en el resto del sitio) */
+  --gradient-nav: linear-gradient(135deg, #0a1628 0%, #132845 40%, #1a3a5c 100%);
+  --color-nav-flat: #132845;
+  --color-nav-border: rgba(0, 180, 255, 0.12);
+
+  /* Texto: neutros con matiz frío */
+  --color-text: #1a2d42;
+  --color-text-muted: #5a6b80;
+  --color-text-soft: #4a5f7a;
+  --color-product-title: #0f2744;
+
+  /* Bordes y superficies con ligero tinte azul */
+  --color-border: #c5d4e8;
+  --color-border-strong: #9db3d4;
+  --color-border-light: #e2eaf5;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f5f8fd;
+  --color-category-surface: #eef3fb;
+  --color-category-border: #c5d4e8;
+  --gradient-category-tab: linear-gradient(135deg, #e8f0fb 0%, #dce8f6 100%);
+  --color-search-row-hover: #e8f2fc;
+  --color-subcategory-hover-bg: linear-gradient(90deg, #e3f0ff 0%, #ffffff 100%);
+
+  /* Tablas / paneles */
+  --gradient-table-header: linear-gradient(135deg, #e0ebfa 0%, #d2e0f5 100%);
+
+  /* Semánticos (ejemplo; precio y alertas sin cambiar la lógica) */
+  --color-success: #008000;
+  --color-success-bright: #009900;
+  --color-success-dark: #006600;
+  --color-danger: #d32f2f;
+  --color-price: #cc0000;
+  --color-promo: rgb(219, 86, 9);
+  --color-promo-hover: #c2410c;
+  --color-star: #ffa500;
+  --color-member-star: #ffd700;
+  --color-warning-bg: #fff8e6;
+  --color-warning-border: #e8b923;
+
+  /* Sidebar (azules del ejemplo) */
+  --color-sidebar-bg: #004a9f;
+  --color-sidebar-active: #003a7d;
+  --color-sidebar-border: #003a7d;
+
+  --color-header-on-dark: #ffffff;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+
+  --shadow-sm: 0 2px 10px rgba(15, 39, 68, 0.07);
+  --shadow-md: 0 10px 28px rgba(15, 39, 68, 0.12);
+  --shadow-header: 0 8px 30px rgba(0, 0, 0, 0.28);
+
+  --touch-target-min: 44px;
+
+  /* Espaciado responsive: cabecera, nav, secciones y pie */
+  --layout-header-inline: clamp(0.75rem, 3vw, 1.25rem);
+  --layout-navbar-inline: clamp(1rem, 4vw, 2.5rem);
+  --layout-section-padding-y: clamp(1.75rem, 4vw, 3.75rem);
+  --layout-section-padding-x: clamp(1rem, 4vw, 2.5rem);
+  --layout-section-padding: var(--layout-section-padding-y) var(--layout-section-padding-x);
+  --layout-section-gap: clamp(1.25rem, 3vw, 2.5rem);
+  --layout-section-gap-md: clamp(1rem, 2.5vw, 1.875rem);
+  --layout-card-grid-gap: clamp(0.75rem, 2vw, 1.25rem);
+  --layout-stat-row-gap: clamp(1.5rem, 8vw, 5rem);
+  --layout-contact-row-gap: clamp(1.25rem, 6vw, 3.75rem);
+  --layout-footer-bottom-pad: clamp(1rem, 3vw, 1.25rem) var(--layout-section-padding-x);
+  /* Featured brands (bloque compacto) */
+  --featured-brands-padding: clamp(1rem, 2.5vw, 1.75rem) var(--layout-section-padding-x);
+  --featured-brands-grid-gap: clamp(0.5rem, 2vw, 1.25rem);
+  --featured-brands-grid-pad: clamp(1rem, 3vw, 2rem);
+  --featured-brands-logo-max-h: clamp(28px, 3.8vw, 48px);
+
+  /* Ancho útil alineado en home / fichas: crece en monitores grandes sin desbordar */
+  --layout-content-max: min(1680px, calc(100vw - 48px));
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+body {
+  min-width: 0;
+}
+
+/* Evita desbordes horizontales con zoom/redimensionado (los SVG con tamaño explícito siguen escalando dentro del contenedor). */
+img,
+video,
+canvas,
+svg {
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary-btn);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-interactive-soft);
+  color: var(--color-text);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+/* Barra de búsqueda: pastilla (el aspecto “vidrio” solo dentro de .header, abajo) */
+.search-bar input {
+  border-radius: 999px 0 0 999px;
+  min-height: var(--touch-target-min);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.search-bar input:focus {
+  outline: none;
+  border-color: var(--color-interactive);
+  box-shadow: 0 0 0 3px var(--color-interactive-soft);
+}
+
+/* Cabecera: texto claro + logo blanco legible */
+.header .phone {
+  color: var(--color-header-text);
+}
+
+.header .email,
+.header .account-link {
+  color: var(--color-header-link);
+}
+
+.header .email:hover,
+.header .account-link:hover {
+  color: var(--color-header-link-hover);
+  text-decoration: underline;
+}
+
+.header .cart-link {
+  color: var(--color-header-text);
+}
+
+.header .cart-link:hover {
+  color: var(--color-header-link);
+}
+
+.header .logo img,
+.header .logo-section img,
+.header a.logo img {
+  filter: drop-shadow(0 0 8px rgba(41, 182, 246, 0.35))
+    drop-shadow(0 2px 12px rgba(0, 0, 0, 0.45));
+}
+
+.header .logo-section .logo {
+  color: var(--color-header-text);
+}
+
+/* Buscador tipo “vidrio” / difuminado sobre fondo azul (como ejemplo.css) */
+.header .search-bar {
+  border: 1px solid var(--search-bar-glass-border);
+  background: var(--search-bar-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 999px;
+  box-shadow: var(--search-bar-glass-shadow);
+  align-items: stretch;
+}
+
+.header .search-bar input {
+  background: transparent !important;
+  border: none !important;
+  color: var(--color-header-text) !important;
+  box-shadow: none !important;
+}
+
+.header .search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.header .search-bar input:focus {
+  outline: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.header .search-bar:focus-within {
+  box-shadow: var(--search-bar-glass-shadow), 0 0 0 2px rgba(41, 182, 246, 0.45);
+}
+
+/* Cabecera por encima del navbar: el dropdown de búsqueda no debe quedar debajo del menú */
+.header {
+  position: relative;
+  z-index: 1100;
+  box-shadow: var(--shadow-header);
+}
+
+.navbar {
+  position: relative;
+  z-index: 1000;
+}
+
+/* Resultados de búsqueda siempre encima del contenido bajo el header */
+.header .search-results,
+.search-bar .search-results {
+  z-index: 10050;
+}

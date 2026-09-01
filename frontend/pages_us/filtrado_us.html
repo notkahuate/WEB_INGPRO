@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Filtered products | INGPRO Suppliers</title>
+    <meta name="robots" content="noindex, follow">
+    <link rel="stylesheet" href="/css/filtrado.css">
+    <link rel="stylesheet" href="/css/site-layout.css?v=20260831b">
+    <link rel="icon" type="image/png" href="/img/image.png" />
+     
+</head>
+<body>
+   <header class="header">
+        <div class="header-container">
+            <a href="https://ingprosuppliers.com"><img src="https://ingprosuppliers.com/imagenes/logo_blanco.png" alt="TEquipment Logo" class="logo" style="width: 150px;">
+            </a>
+
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">☰</button>
+            
+           <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by SKU, Brand, Department, Keyword">
+            <button type="button" aria-label="Search"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+            <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="header-right">
+                <div class="contact-info">
+                    <a href="https://wa.me/14842634627" class="phone">+1 (484) 263-4627</a><br>
+                    <a href="mailto:Sales@TEquipment.NET" class="email">sales@ingprosuppliers.com</a>
+                </div>
+
+            <a href="/pages_us/login_us.html" class="account-link">
+                <span aria-hidden="true">👤</span>
+                <div>
+                    <strong>My Account</strong><br>
+                    <small>Hello, Sign In</small>
+                </div>
+            </a>
+
+            <div class="language-switch">
+                <button type="button" id="openLangModal">🌐 Language</button>
+            </div>
+
+                <a href="/pages_us/carrito_us.html"><span class="cart-count" id="cartCount">Cart (0)</span></a>
+            </div>
+        </div>
+    </header>
+
+    
+
+    <nav class="navbar site-navbar" id="navbar" aria-label="Main navigation">
+                <div class="navbar-inner" id="primaryMenu">
+            <a href="/pages_us/Home_us.html" class="nav-item" data-nav-section="inicio">Home</a>
+            <a href="/pages_us/productos_us.html?section=inicio" class="nav-item active" data-nav-section="productos">Products</a>
+            <a href="https://wa.me/14842634627" class="nav-item">Contact</a>
+        </div>
+    </nav>
+
+    <div class="section-breadcrumb" id="sectionBreadcrumb" aria-label="Current location">
+        <div class="section-breadcrumb-inner">
+            <nav class="section-breadcrumb-track" aria-label="Navigation path">
+                <ol id="sectionBreadcrumbList"></ol>
+            </nav>
+        </div>
+    </div>
+
+
+    <div class="breadcrumb">
+    <a href="index.html">Home</a> / <span id="breadcrumb-subcategoria"></span>
+    </div>
+
+
+        <div class="main-container">
+            <div class="content-area">
+
+                <div class="category-header">
+                    <h1 id="titulo-subcategoria"></h1>
+                </div>
+
+                <div id="lista-subcategorias" class="category-grid"></div>
+
+                <div class="featured-brands">
+                    <h2>Featured Brands</h2>
+                    <div class="brands-grid">
+                        <div class="featured-brand-logo">
+                            <img src="/img/Emerson-Electric-Logo.png">
+                        </div>
+                        <div class="featured-brand-logo">
+                            <img src="/img/Uni-T-logo.png">
+                        </div>
+                        <div class="featured-brand-logo">
+                            <img src="/img/YB1type_Clr.png">
+                        </div>
+                        <div class="featured-brand-logo">
+                            <img src="/img/Emerson-Electric-Logo.png">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+       
+    </div>
+ 
+
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-left">
+                <h2>Nos encantaría saber de usted.</h2>
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <h3>📞 +1 (484) 263-4627</h3>
+                        
+                    </div>
+                    <div class="contact-method">
+                        <h3>✉️ Send us an email</h3>
+                        <p>Email: sales@ingprosuppliers.com</p>
+                    </div>
+                  
+                </div>
+              
+            </div>
+           
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>My Account</h3>
+                <ul>
+                    <li><a href="#">My Account</a></li>
+                    <li><a href="#">Shipping</a></li>
+                    <li><a href="#">Returns</a></li>
+                    <li><a href="#">International Orders</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Payment Options</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Promotions & Offers</h3>
+                <ul>
+                    <li><a href="#">Clearance</a></li>
+                    <li><a href="#">Promotions</a></li>
+                    <li><a href="#">Product Demos</a></li>
+                    <li><a href="#">Government / Educational Pricing</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Save on Test Equipment</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Credit Application</a></li>
+                    <li><a href="#">RMA Form</a></li>
+                    <li><a href="#">Terms and Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Cookie Preferences</a></li>
+                </ul>
+            </div>
+            <div class="footer-column company-info">
+                <h3>Company</h3>
+                <img src="/img/image.png" alt="TEquipment Logo">
+                
+                <p style="font-size: 18px; color: #666; margin-bottom: 10px;">INGPRO SUPPLIERS LLC</p>
+            <p style="font-size: 16px; color: #666; margin-bottom: 15px;">30 N Gould St, Sheridan, WY 82801</p>
+                <p><a href="#">Contact Us</a></p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/14842634627?text=Hola%20quiero%20informacion%20sobre%20un%20producto" class="whatsapp-float" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
+       alt="WhatsApp" 
+       style="width: 50px;">
+</a>
+
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqebc6767e8ffe35fdd92310b182b489b11ab65582f4c2562b92f1527c39b11172" defer></script>
+<script src="/js/filtrado_us.js"></script>
+
+
+
+<!-- Language modal -->
+<div id="languageModal" class="lang-modal" role="dialog" aria-modal="true" aria-labelledby="langModalTitle" hidden>
+  <div class="lang-modal-content">
+    <button type="button" class="lang-close" id="closeLangModal" aria-label="Close">&times;</button>
+    <h2 id="langModalTitle">🌍 Select your language</h2>
+    <p>Which language would you like to view the site in?</p>
+    <div class="lang-buttons">
+      <button type="button" class="lang-btn" data-lang="es">🇪🇸 Spanish</button>
+      <button type="button" class="lang-btn" data-lang="en">🇺🇸 English</button>
+    </div>
+  </div>
+</div>
+
+    <script src="/js/site-layout.js?v=20260831b" defer></script>
+</body>
+</html>

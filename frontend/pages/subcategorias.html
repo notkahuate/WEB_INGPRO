@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Subcategorías de productos | INGPRO Suppliers</title>
+    <meta name="robots" content="index, follow">
+    <link rel="stylesheet" href="/css/subcategorias.css">
+    <link rel="stylesheet" href="/css/site-layout.css?v=20260831b">
+    <link rel="icon" type="image/png" href="/img/image.png" />
+</head>
+<body>
+    <!-- Header -->
+     <header class="header">
+        <div class="header-container">
+            <a href="https://ingprosuppliers.com"><img src="https://ingprosuppliers.com/imagenes/logo_blanco.png" alt="TEquipment Logo" class="logo" style="width: 150px;">
+            </a>
+
+            <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menú" aria-expanded="false">☰</button>
+            
+           <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search by SKU, Brand, Department, Keyword">
+            <button type="button" aria-label="Buscar"><svg aria-hidden="true" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg></button>
+            <div id="searchResults" class="search-results"></div>
+            </div>
+
+            <div class="header-right">
+                <div class="contact-info">
+                    <a href="https://wa.me/14842634627" class="phone">+1 (484) 263-4627</a><br>
+                    <a href="mailto:Sales@TEquipment.NET" class="email">sales@ingprosuppliers.com</a>
+                </div>
+
+
+                 <a href="/pages/login.html" class="account-link">
+                    <span aria-hidden="true">👤</span>
+                    <div>
+                        <strong>Mi Cuenta</strong><br>
+                        <small>Hola, Iniciar Sesión</small>
+                    </div>
+                </a>
+
+                <div class="language-switch">
+                    <button type="button" id="openLangModal">🌐 Idioma</button>
+                </div>
+
+                <a href="/pages/carrito.html"><span class="cart-count" id="cartCount">Carrito (0)</span></a>
+            </div>
+        </div>
+    </header>
+
+    
+
+    <nav class="navbar site-navbar" id="navbar" aria-label="Navegación principal">
+                <div class="navbar-inner" id="primaryMenu">
+            <a href="/pages/index.html" class="nav-item" data-nav-section="inicio">Inicio</a>
+            <a href="/pages/productos.html?section=inicio" class="nav-item" data-nav-section="productos">Productos</a>
+            <a href="https://wa.me/14842634627" class="nav-item">Contacto</a>
+        </div>
+    </nav>
+
+    <div class="section-breadcrumb" id="sectionBreadcrumb" aria-label="Ubicación actual">
+        <div class="section-breadcrumb-inner">
+            <nav class="section-breadcrumb-track" aria-label="Ruta de navegación">
+                <ol id="sectionBreadcrumbList"></ol>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Breadcrumb -->
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumb">
+    <a href="index.html">Inicio</a> / <a href="#">Categoría</a> / Subcategoría
+</div>
+
+    <!-- Main Content -->
+    <main class="motors-category-page">
+  <div class="container">
+    <h1 id="titulo-subcategoria"></h1>
+    <div id="lista-subcategorias" class="motor-categories"></div>
+  </div>
+</main>
+
+
+  
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-container">
+            <div class="contact-left">
+                <div class="contact-methods">
+                    <div class="contact-method">
+                        <h3>📞 +1 (484) 263-4627</h3>
+                        
+                    </div>
+                    <div class="contact-method">
+                        <h3>✉️ Envíanos un email</h3>
+                        <p>Email: sales@ingprosuppliers.com</p>
+                    </div>
+                    
+                </div>
+               
+            </div>
+            
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-column">
+                <h3>Mi Cuenta</h3>
+                <ul>
+                    <li><a href="#">Mi Cuenta</a></li>
+                    <li><a href="#">Envío</a></li>
+                    <li><a href="#">Devoluciones</a></li>
+                    <li><a href="#">Pedidos Internacionales</a></li>
+                    <li><a href="#">Preguntas Frecuentes</a></li>
+                    <li><a href="#">Opciones de Pago</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Promociones y Ofertas</h3>
+                <ul>
+                    <li><a href="#">Liquidación</a></li>
+                    <li><a href="#">Promociones</a></li>
+                    <li><a href="#">Demos de Productos</a></li>
+                    <li><a href="#">Precios Gubernamentales / Educativos</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h3>Recursos</h3>
+                <ul>
+                    <li><a href="#">Ahorra en Equipos de Prueba</a></li>
+                    <li><a href="#">Sobre Nosotros</a></li>
+                    <li><a href="#">Solicitud de Crédito</a></li>
+                    <li><a href="#">Formulario RMA</a></li>
+                    <li><a href="#">Términos y Condiciones</a></li>
+                    <li><a href="#">Política de Privacidad</a></li>
+                    <li><a href="#">Preferencias de Cookies</a></li>
+                </ul>
+            </div>
+            <div class="footer-column company-info">
+                <h3>Compañía</h3>
+                <img src="/img/image.png" alt="INGPRO Logo">
+                <p style="font-size: 18px; color: #666; margin-bottom: 10px;">INGPRO SUPPLIERS LLC</p>
+            <p style="font-size: 16px; color: #666; margin-bottom: 15px;">30 N Gould St, Sheridan, WY 82801</p>
+                <p><a href="#">Contáctanos</a></p>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="https://wa.me/14842634627?text=Hola%20quiero%20informacion%20sobre%20un%20producto" class="whatsapp-float" target="_blank">
+  <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" 
+       alt="WhatsApp" 
+       style="width: 50px;">
+</a>
+<script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.com/widget?wc=siqebc6767e8ffe35fdd92310b182b489b11ab65582f4c2562b92f1527c39b11172" defer></script>
+<script src="/js/subcategorias.js"></script>
+
+
+
+<!-- Modal idioma -->
+<div id="languageModal" class="lang-modal" role="dialog" aria-modal="true" aria-labelledby="langModalTitle" hidden>
+  <div class="lang-modal-content">
+    <button type="button" class="lang-close" id="closeLangModal" aria-label="Cerrar">&times;</button>
+    <h2 id="langModalTitle">🌍 Selecciona tu idioma</h2>
+    <p>¿En qué idioma deseas ver la página?</p>
+    <div class="lang-buttons">
+      <button type="button" class="lang-btn" data-lang="es">🇪🇸 Español</button>
+      <button type="button" class="lang-btn" data-lang="en">🇺🇸 English</button>
+    </div>
+  </div>
+</div>
+
+    <script src="../js/site-layout.js?v=20260831b" defer></script>
+</body>
+</html>

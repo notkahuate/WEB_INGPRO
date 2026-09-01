@@ -1,0 +1,155 @@
+{
+  "kind": "collectionType",
+  "collectionName": "productos",
+  "info": {
+    "singularName": "producto",
+    "pluralName": "productos",
+    "displayName": "Producto",
+    "description": "Catálogo de productos INGPRO"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "item_id": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "name": {
+      "type": "text"
+    },
+    "description": {
+      "type": "json"
+    },
+    "brand": {
+      "type": "string"
+    },
+    "rate": {
+      "type": "decimal"
+    },
+    "stock_on_hand": {
+      "type": "integer"
+    },
+    "sku": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "cf_marca": {
+      "type": "string"
+    },
+    "cf_t_entrega": {
+      "type": "string"
+    },
+    "cf_garant_a": {
+      "type": "string"
+    },
+    "cf_codigo": {
+      "type": "string"
+    },
+    "cf_categoria": {
+      "type": "string"
+    },
+    "cf_subcategoria": {
+      "type": "string"
+    },
+    "cf_item": {
+      "type": "string"
+    },
+    "cf_category": {
+      "type": "string"
+    },
+    "cf_codigo_categoria": {
+      "type": "string"
+    },
+    "cf_en_el_paquete": {
+      "type": "text"
+    },
+    "origen": {
+      "type": "string"
+    },
+    "imagen_url": {
+      "type": "string"
+    },
+    "image_name": {
+      "type": "string"
+    },
+    "imagenes": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["images"],
+      "description": "Sube aquí las fotos del producto. Al guardar se copian a imagenes_url en JSON para la web."
+    },
+    "imagenes_url": {
+      "type": "json",
+      "description": "JSON de URLs para la web. Se actualiza solo al guardar las imágenes subidas."
+    },
+    "config_options": {
+      "type": "json",
+      "description": "Configurador por pasos. Formato: { required: [{ title, description?, image?, options: [{ label, value, image? }] }], optional: [{ title, name, image?, options: [{ label, value, image? }] }] }. image/imagen = URL pública de la foto (paso u opción)."
+    },
+    "datasheet": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["files"],
+      "description": "Sube el PDF de la hoja de datos. Al guardar se copia a datasheet_url para la web."
+    },
+    "datasheet_url": {
+      "type": "string",
+      "description": "URL pública de la hoja de datos. Se actualiza al subir el archivo Datasheet."
+    },
+    "categoria": {
+      "type": "string"
+    },
+    "manuales": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": ["files"],
+      "description": "Sube los PDF del manual. Al guardar se copian a user_manual y manuales_url."
+    },
+    "user_manual": {
+      "type": "string",
+      "description": "URL pública del manual principal. Se actualiza al subir Manuales."
+    },
+    "manuales_url": {
+      "type": "json",
+      "description": "JSON de URLs de manuales para la web. Se actualiza al subir Manuales."
+    },
+    "guia_rapida": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": ["files"],
+      "description": "Sube el PDF de la guía de inicio rápido. Al guardar se copia a quickstart_url."
+    },
+    "quickstart_url": {
+      "type": "string",
+      "description": "URL pública de la guía rápida. Se actualiza al subir Guía rápida."
+    },
+    "especificaciones": {
+      "type": "json"
+    },
+    "tablas": {
+      "type": "json",
+      "description": "Opcional. Formato: { tablas: [{ titulo, columnas, filas }], repuestos: { titulo, parts: [{ fig, figure_title, image, find_no, part_no, part_name, system }] } }"
+    },
+    "created_time": {
+      "type": "datetime"
+    },
+    "last_modified_time": {
+      "type": "datetime"
+    },
+    "secciones": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::seccion.seccion",
+      "mappedBy": "producto"
+    }
+  }
+}

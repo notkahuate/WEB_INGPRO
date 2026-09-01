@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "cotizaciones",
+  "info": {
+    "singularName": "cotizacion",
+    "pluralName": "cotizaciones",
+    "displayName": "Cotizacion",
+    "description": "Cotizaciones de clientes"
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "legacy_id": {
+      "type": "integer",
+      "unique": true
+    },
+    "user_id": {
+      "type": "integer",
+      "required": false
+    },
+    "legacy_user_id": {
+      "type": "integer"
+    },
+    "productos": {
+      "type": "json",
+      "required": true
+    },
+    "total_productos": {
+      "type": "decimal"
+    },
+    "estado": {
+      "type": "string"
+    },
+    "codigo_oportunidad": {
+      "type": "string"
+    },
+    "fecha": {
+      "type": "datetime"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+:root {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #0f172a;
+  background: #f8fafc;
+  line-height: 1.5;
+}
+
+* { box-sizing: border-box; }
+body { margin: 0; }
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+.app-shell { min-height: 100vh; }
+.page-content { padding: 24px; max-width: 1200px; margin: 0 auto; }
+
+.site-header {
+  background: linear-gradient(90deg, #0f172a, #1d4ed8);
+  color: white;
+  padding: 16px 24px;
+}
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.brand img { width: 140px; }
+.search-box { display: flex; flex: 1; max-width: 480px; }
+.search-box input { flex: 1; padding: 10px 12px; border: none; border-radius: 6px 0 0 6px; }
+.search-box button { border: none; padding: 10px 14px; border-radius: 0 6px 6px 0; cursor: pointer; }
+.header-actions { display: flex; gap: 16px; font-weight: 600; }
+
+.hero-section {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  align-items: center;
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+.eyebrow { color: #2563eb; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; }
+.hero-section h1 { font-size: 2.4rem; margin: 8px 0; }
+.hero-actions { display: flex; gap: 12px; margin-top: 16px; }
+.btn { display: inline-block; padding: 10px 16px; border-radius: 999px; font-weight: 600; }
+.btn-primary { background: #2563eb; color: white; }
+.btn-secondary { background: #e2e8f0; color: #0f172a; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.product-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+.product-card img { width: 100%; height: 180px; object-fit: cover; }
+.product-card-body { padding: 16px; }
+.section { margin-top: 24px; }
