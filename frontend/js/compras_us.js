@@ -180,25 +180,62 @@ function buildProductUrl(product) {
 /** Hero title like TEHMA mockup: accent on model/reference */
 function formatHeroProductTitleHtml(name, product) {
   const raw = String(name || "").trim() || "Product";
-  const candidates = [
-    String((product && extractProductModel(product)) || extractModelFromName(raw) || "").trim(),
-    String(product?.sku || product?.cf_codigo || "").trim(),
-  ].filter((value) => value.length >= 2 && !isOpaqueProductToken(value));
+  const tokens = [
+    product?.brand,
+    product?.cf_marca,
+    product && extractProductModel(product),
+    extractModelFromName(raw),
+    product?.sku,
+    product?.cf_codigo,
+  ]
+    .map((value) => String(value || "").trim())
+    .filter((value) => value.length >= 3 && !isOpaqueProductToken(value));
 
-  for (const token of candidates) {
-    const idx = raw.toLowerCase().indexOf(token.toLowerCase());
-    if (idx < 0) continue;
-    const before = raw.slice(0, idx);
-    const match = raw.slice(idx, idx + token.length);
-    const after = raw.slice(idx + token.length);
-    return (
-      escapeHtml(before) +
-      `<span class="accent">${escapeHtml(match)}</span>` +
-      escapeHtml(after)
-    );
+  const unique = [];
+  const seen = new Set();
+  for (const token of tokens) {
+    const key = token.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(token);
+  }
+  unique.sort((a, b) => b.length - a.length);
+
+  const lower = raw.toLowerCase();
+  const used = new Array(raw.length).fill(false);
+  const matches = [];
+
+  for (const token of unique) {
+    const needle = token.toLowerCase();
+    let from = 0;
+    while (from <= lower.length - needle.length) {
+      const idx = lower.indexOf(needle, from);
+      if (idx < 0) break;
+      const overlaps = used.slice(idx, idx + needle.length).some(Boolean);
+      if (!overlaps) {
+        matches.push({
+          idx,
+          len: needle.length,
+          text: raw.slice(idx, idx + needle.length),
+        });
+        for (let i = idx; i < idx + needle.length; i += 1) used[i] = true;
+      }
+      from = idx + 1;
+    }
   }
 
-  return escapeHtml(raw);
+  matches.sort((a, b) => a.idx - b.idx);
+  if (!matches.length) return escapeHtml(raw);
+
+  let html = "";
+  let cursor = 0;
+  for (const match of matches) {
+    html += escapeHtml(raw.slice(cursor, match.idx));
+    html += `<span class="accent">${escapeHtml(match.text)}</span>`;
+    cursor = match.idx + match.len;
+  }
+  html += escapeHtml(raw.slice(cursor));
+  return html;
 }
 
 function getProductLeadText(product, maxLen = 260) {
