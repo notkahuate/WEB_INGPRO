@@ -2116,6 +2116,26 @@ function bindTableFilters(tableSection, tabla) {
   run();
 }
 
+function localizeProductTabla(tabla) {
+  if (!tabla || typeof tabla !== "object") return tabla;
+
+  const lang = COMPRAS_IS_ENGLISH;
+  const localizeCell = (cell) => resolveLocalizedText(cell, lang);
+
+  return {
+    ...tabla,
+    titulo: localizeCell(tabla.titulo),
+    columnas: Array.isArray(tabla.columnas)
+      ? tabla.columnas.map(localizeCell)
+      : [],
+    filas: Array.isArray(tabla.filas)
+      ? tabla.filas.map((row) =>
+          Array.isArray(row) ? row.map(localizeCell) : row
+        )
+      : [],
+  };
+}
+
 /** Parsea el JSON `tablas` del producto: tablas genéricas + repuestos opcionales. */
 function parseProductTablasPayload(raw) {
   let parsed = raw;
@@ -2129,6 +2149,8 @@ function parseProductTablasPayload(raw) {
   let tablas = [];
   if (Array.isArray(parsed.tablas)) tablas = parsed.tablas;
   else if (Array.isArray(parsed) && parsed[0] && Array.isArray(parsed[0].columnas)) tablas = parsed;
+
+  tablas = tablas.map(localizeProductTabla);
 
   let repuestos = null;
   if (parsed.repuestos) repuestos = normalizeRepuestosModule(parsed.repuestos);
@@ -2174,7 +2196,9 @@ function normalizeRepuestosModule(data) {
   if (!parts.length) return null;
   return {
     titulo:
-      (data && !Array.isArray(data) && (data.titulo || data.title)) ||
+      (data &&
+        !Array.isArray(data) &&
+        (resolveLocalizedText(data.titulo) || data.title)) ||
       (COMPRAS_IS_ENGLISH ? "Spare parts" : "Repuestos"),
     parts,
   };
