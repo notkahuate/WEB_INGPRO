@@ -2878,10 +2878,12 @@ function normalizeStrapiSecciones(payload) {
         })
         .filter((img) => img.url);
 
+      const tituloEn = String(attrs.titulo_en || "").trim();
+      const infoEn = String(attrs.informacion_en || "").trim();
       return {
         id: entry?.id || attrs.id,
-        titulo: attrs.titulo || '',
-        informacion: attrs.informacion || '',
+        titulo: tituloEn || attrs.titulo || "",
+        informacion: infoEn || attrs.informacion || "",
         orden: Number(attrs.orden) || 0,
         imagenes,
       };

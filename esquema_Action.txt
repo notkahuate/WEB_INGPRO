@@ -203,7 +203,7 @@
       "post": {
         "operationId": "crearSeccion",
         "summary": "Crear sección CMS y asignarla a un producto",
-        "description": "Crea una sección. titulo es obligatorio. producto debe ser el ID NUMÉRICO del producto Strapi (no item_id). orden entero (1,2,3...). imagenes opcionales como array de IDs de media ya subidos.",
+        "description": "Crea una sección. titulo es obligatorio (español). titulo_en e informacion_en son el nombre y el contenido en inglés. producto debe ser el ID NUMÉRICO del producto Strapi (no item_id). orden entero (1,2,3...). imagenes opcionales como array de IDs de media ya subidos.",
         "requestBody": {
           "required": true,
           "content": {
@@ -247,7 +247,7 @@
       "put": {
         "operationId": "actualizarSeccion",
         "summary": "Editar sección CMS o reasignarla a otro producto",
-        "description": "Actualiza titulo, informacion, orden y/o producto. Para reasignar: data.producto = ID numérico del producto destino.",
+        "description": "Actualiza titulo, titulo_en, informacion, informacion_en, orden y/o producto. Para reasignar: data.producto = ID numérico del producto destino.",
         "parameters": [
           {
             "name": "id",
@@ -380,12 +380,23 @@
       },
       "SeccionData": {
         "type": "object",
-        "description": "Sección CMS. titulo obligatorio al crear. producto = ID numérico del producto Strapi.",
+        "description": "Sección CMS. titulo obligatorio al crear (español). producto = ID numérico del producto Strapi.",
         "properties": {
-          "titulo": { "type": "string" },
+          "titulo": {
+            "type": "string",
+            "description": "Nombre de la sección en español."
+          },
+          "titulo_en": {
+            "type": "string",
+            "description": "Nombre de la sección en inglés. Si falta, la ficha EN usa titulo."
+          },
           "informacion": {
             "type": "string",
-            "description": "Texto o markdown simple. Listas 1. 2. 3. se ven bien en la web."
+            "description": "Contenido en español. Texto o markdown simple. Listas 1. 2. 3. se ven bien en la web."
+          },
+          "informacion_en": {
+            "type": "string",
+            "description": "Contenido en inglés. Si falta, la ficha EN usa informacion."
           },
           "orden": {
             "type": "integer",

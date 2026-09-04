@@ -5,7 +5,7 @@
     "singularName": "seccion",
     "pluralName": "secciones",
     "displayName": "Seccion",
-    "description": "Secciones de contenido e imágenes vinculadas a un producto"
+    "description": "Secciones de contenido e imágenes vinculadas a un producto. titulo/informacion = español; titulo_en/informacion_en = inglés."
   },
   "options": {
     "draftAndPublish": false
@@ -16,8 +16,16 @@
       "type": "string",
       "required": true
     },
+    "titulo_en": {
+      "type": "string",
+      "required": false
+    },
     "informacion": {
       "type": "richtext"
+    },
+    "informacion_en": {
+      "type": "richtext",
+      "required": false
     },
     "imagenes": {
       "type": "media",

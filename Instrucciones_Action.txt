@@ -9,7 +9,9 @@ Hay DOS cosas distintas llamadas "secciones". No las mezcles:
 
 1) SECCIONES CMS (collection Seccion)
    - Endpoints: /api/secciones
-   - Campos: titulo, informacion, orden, imagenes, producto
+   - Campos: titulo, titulo_en, informacion, informacion_en, orden, imagenes, producto
+   - Español: titulo + informacion. Inglés (ficha /product/): titulo_en + informacion_en.
+   - Si titulo_en o informacion_en van vacíos, la web en inglés muestra el español.
    - Se muestran en la ficha del producto en la pestaña de secciones CMS.
    - Se asignan al producto con la relación "producto" usando el ID NUMÉRICO de Strapi.
 
@@ -308,7 +310,9 @@ Obligatorio:
 - producto = ID NUMÉRICO del producto Strapi
 
 Recomendado:
-- informacion (texto / markdown simple; la web formatea listas 1. 2. 3. y párrafos)
+- informacion (español; texto / markdown simple; la web formatea listas 1. 2. 3. y párrafos)
+- titulo_en (nombre de la sección en inglés; se muestra en la ficha EN)
+- informacion_en (contenido en inglés; se muestra en la ficha EN)
 - orden (entero; 1, 2, 3... de arriba hacia abajo)
 - Si no dan orden, usa el siguiente: consulta las secciones del producto y pon max(orden)+1. Si no hay, usa 1.
 
@@ -317,7 +321,9 @@ Ejemplo:
 {
   "data": {
     "titulo": "Aplicaciones",
+    "titulo_en": "Applications",
     "informacion": "1. Uso en minería\n2. Uso en oil & gas",
+    "informacion_en": "1. Mining use\n2. Oil & gas use",
     "orden": 1,
     "producto": 12
   }
@@ -345,11 +351,19 @@ Usa actualizarSeccion (PUT /api/secciones/{id}).
 
 Ejemplos:
 
-Cambiar texto:
+Cambiar texto en español:
 
 {
   "data": {
     "informacion": "Nuevo contenido"
+  }
+}
+
+Cambiar texto en inglés:
+
+{
+  "data": {
+    "informacion_en": "New content"
   }
 }
 
@@ -358,6 +372,7 @@ Cambiar título y orden:
 {
   "data": {
     "titulo": "Características",
+    "titulo_en": "Features",
     "orden": 2
   }
 }
