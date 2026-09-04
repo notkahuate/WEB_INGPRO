@@ -177,6 +177,21 @@ function buildProductUrl(product) {
   return `/product/${buildProductSlug(product)}`;
 }
 
+function wrapTitleKeepTogetherHtml(text) {
+  const raw = String(text || "");
+  const re = /[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+/g;
+  let html = "";
+  let cursor = 0;
+  let match;
+  while ((match = re.exec(raw))) {
+    html += escapeHtml(raw.slice(cursor, match.index));
+    html += `<span class="title-keep">${escapeHtml(match[0])}</span>`;
+    cursor = match.index + match[0].length;
+  }
+  html += escapeHtml(raw.slice(cursor));
+  return html;
+}
+
 /** Hero title like TEHMA mockup: accent on model/reference */
 function formatHeroProductTitleHtml(name, product) {
   const raw = String(name || "").trim() || "Product";
@@ -225,16 +240,16 @@ function formatHeroProductTitleHtml(name, product) {
   }
 
   matches.sort((a, b) => a.idx - b.idx);
-  if (!matches.length) return escapeHtml(raw);
+  if (!matches.length) return wrapTitleKeepTogetherHtml(raw);
 
   let html = "";
   let cursor = 0;
   for (const match of matches) {
-    html += escapeHtml(raw.slice(cursor, match.idx));
+    html += wrapTitleKeepTogetherHtml(raw.slice(cursor, match.idx));
     html += `<span class="accent">${escapeHtml(match.text)}</span>`;
     cursor = match.idx + match.len;
   }
-  html += escapeHtml(raw.slice(cursor));
+  html += wrapTitleKeepTogetherHtml(raw.slice(cursor));
   return html;
 }
 

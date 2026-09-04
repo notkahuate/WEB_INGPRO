@@ -3018,9 +3018,9 @@ table:not(.layout-table):not(.spec-data-table) tbody tr:last-child td { border-b
   background: none;
   -webkit-background-clip: unset;
   background-clip: unset;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  hyphens: auto;
+  overflow-wrap: break-word;
+  word-break: normal;
+  hyphens: none;
 }
 
 .compras-page-content .product-info-main .product-title.is-title-md {
@@ -3041,13 +3041,18 @@ table:not(.layout-table):not(.spec-data-table) tbody tr:last-child td { border-b
   letter-spacing: -0.02em;
 }
 
-.compras-page-content .product-info-main .product-title .accent {
+.compras-page-content .product-info-main .product-title .accent,
+.compras-page-content .product-info-main .product-title .title-keep {
   background: none;
   background-image: none;
   -webkit-background-clip: unset;
   background-clip: unset;
-  color: #004BE4 !important;
   display: inline;
+  white-space: nowrap;
+}
+
+.compras-page-content .product-info-main .product-title .accent {
+  color: #004BE4 !important;
 }
 
 .compras-page-content .product-lead {
