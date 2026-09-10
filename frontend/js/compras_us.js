@@ -2599,13 +2599,71 @@ function findModelColumnIndex(columns) {
   );
 }
 
-function showComprasToast(message) {
-  document.querySelectorAll(".cart-toast").forEach((node) => node.remove());
-  const toast = document.createElement("div");
-  toast.className = "cart-toast";
-  toast.textContent = message;
-  document.body.appendChild(toast);
-  setTimeout(() => toast.remove(), 2200);
+function getComprasCartUrl() {
+  return COMPRAS_IS_ENGLISH ? "/pages_us/carrito_us.html" : "/pages/carrito.html";
+}
+
+function showCartAddedDock() {
+  const cart = JSON.parse(sessionStorage.getItem("cartItems") || "[]");
+  if (!cart.length) return;
+
+  const labels = COMPRAS_IS_ENGLISH
+    ? {
+        title: "Added to cart",
+        go: "Go to cart",
+        close: "Close",
+        qty: "Qty",
+      }
+    : {
+        title: "Añadidos al carrito",
+        go: "Ir al carrito",
+        close: "Cerrar",
+        qty: "Cant.",
+      };
+
+  let dock = document.getElementById("cartAddedDock");
+  if (!dock) {
+    dock = document.createElement("aside");
+    dock.id = "cartAddedDock";
+    dock.className = "cart-added-dock";
+    dock.setAttribute("role", "status");
+    document.body.appendChild(dock);
+  }
+
+  const totalQty = cart.reduce((acc, item) => acc + (Number(item.quantity) || 0), 0);
+  const preview = cart.slice(-4).reverse();
+
+  dock.innerHTML =
+    `<div class="cart-added-dock__head">` +
+    `<strong>${escapeHtml(labels.title)}</strong>` +
+    `<span class="cart-added-dock__count">${totalQty}</span>` +
+    `<button type="button" class="cart-added-dock__close" aria-label="${escapeHtml(labels.close)}">×</button>` +
+    `</div>` +
+    `<ul class="cart-added-dock__list">` +
+    preview
+      .map((item) => {
+        const img = escapeHtml(item.image || "/img/no-image.png");
+        const name = escapeHtml(item.name || item.partNumber || "");
+        const ref = escapeHtml(item.partNumber || item.modelo || "");
+        const qty = Number(item.quantity) || 1;
+        return (
+          `<li>` +
+          `<img src="${img}" alt="">` +
+          `<span><b>${name}</b><small>${ref} · ${labels.qty} ${qty}</small></span>` +
+          `</li>`
+        );
+      })
+      .join("") +
+    `</ul>` +
+    `<a class="cart-added-dock__go" href="${getComprasCartUrl()}">${escapeHtml(labels.go)}</a>`;
+
+  dock.querySelector(".cart-added-dock__close").addEventListener("click", () => {
+    dock.remove();
+  });
+
+  dock.classList.remove("is-pulse");
+  void dock.offsetWidth;
+  dock.classList.add("is-pulse");
 }
 
 function addTableModelToCart(model) {
@@ -2635,9 +2693,7 @@ function addTableModelToCart(model) {
   else cart.push(item);
   sessionStorage.setItem("cartItems", JSON.stringify(cart));
   updateCartCount();
-  showComprasToast(
-    COMPRAS_IS_ENGLISH ? `Added ${code} to cart` : `Se añadió ${code} al carrito`
-  );
+  showCartAddedDock();
 }
 
 function buildAddModelButton(model) {
