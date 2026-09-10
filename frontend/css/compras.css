@@ -3070,7 +3070,7 @@ table:not(.layout-table):not(.spec-data-table) tbody tr:last-child td { border-b
 .compras-page-content .quote-card-title {
   margin: 0 0 6px;
   color: #02307B;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 900;
   letter-spacing: -0.03em;
 }
@@ -3078,7 +3078,7 @@ table:not(.layout-table):not(.spec-data-table) tbody tr:last-child td { border-b
 .compras-page-content .quote-card-meta {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2px 8px;
+  gap: 6px;
   margin: 0 0 8px;
   font-size: 11px;
   color: #64748b;
@@ -3087,63 +3087,51 @@ table:not(.layout-table):not(.spec-data-table) tbody tr:last-child td { border-b
 
 .compras-page-content .quote-card-meta .meta-row {
   display: flex;
-  flex-wrap: nowrap;
-  align-items: baseline;
-  gap: 4px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
   min-width: 0;
+  padding: 6px 8px;
+  background: #f6f9ff;
+  border: 1px solid rgba(0, 75, 228, 0.1);
+  border-radius: 8px;
 }
 
 .compras-page-content .quote-card-meta .meta-label {
   color: #66758f;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   font-size: 9px;
-  flex: 0 0 auto;
+  line-height: 1.2;
 }
 
+.compras-page-content .quote-card-meta .meta-value,
 .compras-page-content .quote-card-meta #product-item-id,
-.compras-page-content .quote-card-meta #product-brand {
-  color: #02307B;
-  font-weight: 700;
-  font-size: 11px;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.compras-page-content .quote-card-meta #product-country {
-  color: #02307B;
-  font-weight: 700;
-  font-size: 11px;
-  min-width: 0;
-  white-space: normal;
-  overflow: visible;
-  line-height: 1.25;
-}
-
-.compras-page-content .quote-card-meta .meta-row--sku {
-  grid-column: 1 / -1;
-  flex-wrap: wrap;
-  align-items: flex-start;
-}
-
+.compras-page-content .quote-card-meta #product-brand,
+.compras-page-content .quote-card-meta #product-country,
 .compras-page-content .quote-card-meta #product-sku {
   color: #02307B;
   font-weight: 700;
   font-size: 11px;
   min-width: 0;
-  flex: 1 1 auto;
+  max-width: 100%;
   overflow: visible;
   text-overflow: unset;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
-  line-height: 1.35;
+  line-height: 1.3;
+}
+
+.compras-page-content .quote-card-meta .meta-row--sku {
+  grid-column: 1 / -1;
 }
 
 .compras-page-content .quote-card-meta .product-country-badge {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 4px;
   font-size: 11px;
   font-weight: 700;
@@ -4441,6 +4429,152 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
     padding: 10px 12px;
     font-size: 12.5px;
   }
+
+  .compras-page-content .table-wrap {
+    overflow: visible;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .compras-page-content .spec-data-table,
+  .compras-page-content .spec-data-table--compare,
+  .compras-page-content .table-wrap .spec-data-table {
+    min-width: 0 !important;
+    width: 100%;
+    display: block;
+    box-shadow: none;
+    border-radius: 0;
+  }
+
+  .compras-page-content .spec-data-table thead {
+    display: none;
+  }
+
+  .compras-page-content .spec-data-table tbody {
+    display: block;
+  }
+
+  .compras-page-content .spec-data-table tbody tr {
+    display: block;
+    margin: 0 0 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(0, 75, 228, 0.14);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 8px 18px rgba(2, 48, 123, 0.06);
+  }
+
+  .compras-page-content .spec-data-table tbody tr:nth-child(even) td,
+  .compras-page-content .spec-data-table tbody tr:hover td {
+    background: transparent;
+  }
+
+  .compras-page-content .spec-data-table tbody td,
+  .compras-page-content .spec-data-table--compare tbody td:not(:first-child),
+  .compras-page-content .spec-data-table tbody td:first-child,
+  .compras-page-content .spec-data-table--compare tbody td:first-child {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-width: 0;
+    padding: 8px 0;
+    border: none;
+    background: transparent !important;
+    text-align: left !important;
+    white-space: normal;
+    font-size: 14px;
+  }
+
+  .compras-page-content .spec-data-table tbody td + td {
+    border-top: 1px solid #eef3fa;
+  }
+
+  .compras-page-content .spec-data-table tbody td::before {
+    content: attr(data-label);
+    flex: 0 0 42%;
+    max-width: 48%;
+    color: #02307B;
+    font-weight: 800;
+    font-size: 11px;
+    line-height: 1.35;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .compras-page-content .cms-secciones-container {
+    gap: 16px;
+  }
+
+  .compras-page-content .cms-seccion-card {
+    padding: 16px 14px 14px;
+    border-radius: 16px;
+  }
+
+  .compras-page-content .tab-content.section h3.cms-seccion-title,
+  .compras-page-content h3.cms-seccion-title {
+    font-size: clamp(20px, 6vw, 26px);
+    margin-bottom: 12px;
+  }
+
+  .compras-page-content .cms-seccion-layout--media {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .compras-page-content .cms-seccion-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .compras-page-content .cms-seccion-gallery--single {
+    max-width: none;
+  }
+
+  .compras-page-content .cms-seccion-image img,
+  .compras-page-content .cms-seccion-gallery--single .cms-seccion-image img {
+    max-height: 240px;
+  }
+
+  .compras-page-content .cms-seccion-body,
+  .compras-page-content .cms-seccion-body > p:first-child {
+    font-size: 15px;
+  }
+
+  .compras-page-content .cms-step-list__item {
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+  }
+
+  .compras-page-content .cms-step-list__num {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .compras-page-content .cms-step {
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .compras-page-content .cms-step__num {
+    width: 44px;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .compras-page-content .tab-content.section {
+    padding: 28px 0;
+    overflow-x: hidden;
+  }
+
+  .compras-page-content .tab-content.section h2 {
+    font-size: 22px;
+  }
 }
 
 @media (max-width: 1180px) {
@@ -4555,7 +4689,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 }
 
 .compras-page-content .cms-seccion-layout--media {
-  grid-template-columns: minmax(320px, 440px) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
   align-items: start;
   gap: 24px;
 }
@@ -4725,16 +4859,340 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 @media (max-width: 900px) {
   .compras-page-content .cms-seccion-layout--media {
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .compras-page-content .cms-seccion-gallery--single {
-    max-width: 320px;
+    max-width: none;
   }
 
   .compras-page-content .cms-seccion-image img,
   .compras-page-content .cms-seccion-gallery--single .cms-seccion-image img {
     min-height: 0;
-    max-height: 320px;
+    max-height: 260px;
   }
 }
+
+@media (max-width: 768px) {
+  .compras-page-content .cms-secciones-container {
+    gap: 16px;
+  }
+
+  .compras-page-content .cms-seccion-card {
+    padding: 16px 14px 14px;
+    border-radius: 16px;
+  }
+
+  .compras-page-content .tab-content.section h3.cms-seccion-title,
+  .compras-page-content h3.cms-seccion-title {
+    font-size: 1.125rem;
+    margin-bottom: 12px;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+
+  .compras-page-content .cms-seccion-title::after {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .compras-page-content .cms-seccion-gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .compras-page-content .cms-seccion-body,
+  .compras-page-content .cms-seccion-body > p:first-child {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .compras-page-content .cms-step-list__item {
+    grid-template-columns: 36px 1fr;
+    gap: 10px;
+    padding: 10px 12px;
+    text-align: left;
+  }
+
+  .compras-page-content .cms-step-list__num {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .compras-page-content .cms-step {
+    grid-template-columns: 44px 1fr;
+    gap: 10px;
+    padding: 12px;
+    text-align: left;
+  }
+
+  .compras-page-content .cms-step__num {
+    width: 44px;
+    height: 44px;
+    font-size: 14px;
+  }
+
+  .compras-page-content .cms-step__title {
+    font-size: 14px;
+  }
+
+  .compras-page-content .cms-step__desc {
+    font-size: 13px;
+  }
+
+  .compras-page-content #cms-secciones,
+  .compras-page-content #tablas,
+  .compras-page-content .tables-container {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+@media (max-width: 900px) {
+  .compras-page-content .product-info-main {
+    align-items: center;
+    text-align: center;
+  }
+
+  .compras-page-content .product-eyebrow {
+    justify-content: center;
+  }
+
+  .compras-page-content .product-info-main .product-title,
+  .compras-page-content .product-info-main .product-title.is-title-md,
+  .compras-page-content .product-info-main .product-title.is-title-sm,
+  .compras-page-content .product-info-main .product-title.is-title-xs {
+    font-size: 1.2rem !important;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .compras-page-content .product-info-main .product-title .accent,
+  .compras-page-content .product-info-main .product-title .title-keep {
+    white-space: normal;
+  }
+
+  .compras-page-content .product-lead {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 auto 8px;
+    max-width: 36rem;
+  }
+
+  .compras-page-content .gallery,
+  .compras-page-content .product-images {
+    text-align: center;
+  }
+
+  .compras-page-content .main-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .compras-page-content .price-box,
+  .compras-page-content .quote-card-title {
+    text-align: center;
+  }
+
+  .compras-page-content .quote-card-meta .meta-row {
+    align-items: center;
+    text-align: center;
+  }
+
+  .compras-page-content .purchase-box .note-box,
+  .compras-page-content .expert-help {
+    text-align: center;
+  }
+
+  .compras-page-content .tab-content.section h2,
+  .compras-page-content .series-section.section h2,
+  .compras-page-content .tables-tab-header h2 {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .compras-page-content .tables-tab-intro {
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .compras-page-content .table-title.collapsible {
+    justify-content: center;
+    text-align: center;
+    font-size: 13px;
+    padding: 12px 10px;
+  }
+
+  .compras-page-content .table-title-text {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  .compras-page-content .spec-data-table tbody td {
+    flex-direction: column;
+    align-items: center;
+    text-align: center !important;
+    gap: 4px;
+  }
+
+  .compras-page-content .spec-data-table tbody td::before {
+    flex: none;
+    max-width: 100%;
+  }
+
+  .compras-page-content .ip-model-selector__title {
+    font-size: 1.2rem;
+    text-align: center;
+  }
+
+  .compras-page-content .ip-model-selector__tag,
+  .compras-page-content .ip-model-selector__lead {
+    text-align: center;
+  }
+}
+
+.compras-page-content #product-features.product-features {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.compras-page-content .desc-card {
+  position: relative;
+  padding: 18px 20px 18px 22px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(244, 249, 255, 0.92));
+  border: 1px solid rgba(0, 75, 228, 0.12);
+  box-shadow: 0 12px 28px rgba(2, 48, 123, 0.07);
+  overflow: hidden;
+  animation: desc-card-in 0.55s ease both;
+  animation-delay: var(--d, 0ms);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.compras-page-content .desc-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(180deg, #004BE4, #29b6f6);
+}
+
+.compras-page-content .desc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 36px rgba(2, 48, 123, 0.12);
+}
+
+.compras-page-content .desc-card p,
+.compras-page-content .desc-card .desc-block {
+  margin: 0;
+  color: #1e3a5f;
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.compras-page-content .desc-card p + p,
+.compras-page-content .desc-card ul {
+  margin-top: 10px;
+}
+
+@keyframes desc-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.compras-page-content .table-action-col {
+  width: 1%;
+  text-align: center !important;
+  white-space: nowrap;
+}
+
+.compras-page-content .table-row-action {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.compras-page-content .table-add-model-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 84px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #004BE4, #02307B);
+  color: #fff;
+  font: 800 12px/1 system-ui, sans-serif;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(0, 75, 228, 0.22);
+  transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.compras-page-content .table-add-model-btn:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+
+.compras-page-content .table-add-model-btn--panel {
+  margin-top: 16px;
+  min-width: 160px;
+  padding: 10px 16px;
+  font-size: 13px;
+}
+
+.cart-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  z-index: 4000;
+  transform: translateX(-50%);
+  padding: 12px 16px;
+  border-radius: 999px;
+  background: #02307B;
+  color: #fff;
+  font: 700 13px/1.3 system-ui, sans-serif;
+  box-shadow: 0 16px 36px rgba(2, 48, 123, 0.28);
+  animation: desc-card-in 0.25s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .compras-page-content .desc-card,
+  .cart-toast {
+    animation: none;
+  }
+
+  .compras-page-content .desc-card:hover,
+  .compras-page-content .table-add-model-btn:hover {
+    transform: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .compras-page-content .spec-data-table tbody td.table-row-action::before {
+    display: none;
+  }
+
+  .compras-page-content .table-add-model-btn {
+    width: 100%;
+    max-width: 220px;
+  }
+}
+
+
  

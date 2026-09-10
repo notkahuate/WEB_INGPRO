@@ -1377,7 +1377,12 @@ function loadSelectedProduct() {
             return `<p>${escapeHtml(content)}</p>`;
           })
           .filter(Boolean);
-        descriptionList.innerHTML = resultado.join("");
+        descriptionList.innerHTML = resultado
+          .map(
+            (html, i) =>
+              `<article class="desc-card" style="--d:${Math.min(i, 8) * 70}ms">${html}</article>`
+          )
+          .join("");
       }
     } else if (typeof descriptionData === 'string') {
       // Formato anterior de texto plano
@@ -1403,7 +1408,12 @@ function loadSelectedProduct() {
           return `<p>${p.trim()}</p>`;
         });
 
-        descriptionList.innerHTML = resultado.join("");
+        descriptionList.innerHTML = resultado
+          .map(
+            (html, i) =>
+              `<article class="desc-card" style="--d:${Math.min(i, 8) * 70}ms">${html}</article>`
+          )
+          .join("");
       }
     }
   }
@@ -2583,6 +2593,62 @@ function parseComparisonModels(tabla) {
   });
 }
 
+function findModelColumnIndex(columns) {
+  return (Array.isArray(columns) ? columns : []).findIndex((col) =>
+    /\bmodel(o|os)?s?\b/i.test(String(col || "").trim())
+  );
+}
+
+function showComprasToast(message) {
+  document.querySelectorAll(".cart-toast").forEach((node) => node.remove());
+  const toast = document.createElement("div");
+  toast.className = "cart-toast";
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2200);
+}
+
+function addTableModelToCart(model) {
+  const code = String(model || "").trim();
+  if (!code) return;
+
+  const selectedProduct = JSON.parse(localStorage.getItem("selectedProduct") || "null");
+  if (!selectedProduct) return;
+
+  const baseName = selectedProduct.name || (COMPRAS_IS_ENGLISH ? "Product" : "Producto");
+  const item = {
+    id: `${selectedProduct.item_id || selectedProduct.id || "item"}::${code}`,
+    name: `${baseName} — ${code}`,
+    partNumber: code,
+    brand: selectedProduct.cf_marca || selectedProduct.brand || "",
+    image: getImageUrl(selectedProduct) || "/img/no-image.png",
+    quantity: 1,
+    categoria: selectedProduct.cf_categoria || selectedProduct.categoria || "",
+    modelo: code,
+  };
+
+  const cart = JSON.parse(sessionStorage.getItem("cartItems") || "[]");
+  const existing = cart.find(
+    (entry) => String(entry.id) === String(item.id) && entry.partNumber === item.partNumber
+  );
+  if (existing) existing.quantity += 1;
+  else cart.push(item);
+  sessionStorage.setItem("cartItems", JSON.stringify(cart));
+  updateCartCount();
+  showComprasToast(
+    COMPRAS_IS_ENGLISH ? `Added ${code} to cart` : `Se añadió ${code} al carrito`
+  );
+}
+
+function buildAddModelButton(model) {
+  const btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "table-add-model-btn";
+  btn.dataset.model = String(model || "").trim();
+  btn.textContent = COMPRAS_IS_ENGLISH ? "Add" : "Añadir";
+  return btn;
+}
+
 function buildModelSelectorModule(tabla) {
   const models = parseComparisonModels(tabla);
   if (!models.length) return null;
@@ -2654,7 +2720,10 @@ function buildModelSelectorModule(tabla) {
         ? `<p class="ip-model-panel__desc">${escapeHtml(model.subtitle)}</p>`
         : "") +
       `<div class="ip-model-metrics">${metrics || `<p class="ip-model-panel__desc">${escapeHtml(labels.empty)}</p>`}</div>` +
-      (fits ? `<div class="ip-model-fits">${fits}</div>` : "");
+      (fits ? `<div class="ip-model-fits">${fits}</div>` : "") +
+      `<button type="button" class="table-add-model-btn table-add-model-btn--panel" data-model="${escapeHtml(model.name)}">${
+        COMPRAS_IS_ENGLISH ? "Add this model" : "Añadir este modelo"
+      }</button>`;
   }
 
   root.querySelectorAll("[data-model-id]").forEach((btn) => {
@@ -2664,6 +2733,12 @@ function buildModelSelectorModule(tabla) {
       const model = models.find((m) => m.id === btn.getAttribute("data-model-id"));
       renderModel(model);
     });
+  });
+
+  root.addEventListener("click", (event) => {
+    const addBtn = event.target.closest(".table-add-model-btn");
+    if (!addBtn) return;
+    addTableModelToCart(addBtn.dataset.model);
   });
 
   renderModel(models[0]);
@@ -2714,6 +2789,8 @@ function buildProductTableSection(tabla, index) {
   if (isCompare) table.classList.add("spec-data-table--compare");
 
   const columns = Array.isArray(tabla.columnas) ? tabla.columnas : [];
+  const modelColIndex = findModelColumnIndex(columns);
+  const canAddModels = modelColIndex >= 0;
   const thead = document.createElement("thead");
   const headerRow = document.createElement("tr");
   columns.forEach((col) => {
@@ -2721,6 +2798,12 @@ function buildProductTableSection(tabla, index) {
     th.textContent = col;
     headerRow.appendChild(th);
   });
+  if (canAddModels) {
+    const actionTh = document.createElement("th");
+    actionTh.className = "table-action-col";
+    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Quote" : "Cotizar";
+    headerRow.appendChild(actionTh);
+  }
   thead.appendChild(headerRow);
   table.appendChild(thead);
 
@@ -2730,6 +2813,7 @@ function buildProductTableSection(tabla, index) {
     fila.forEach((cell, cellIndex) => {
       const td = document.createElement("td");
       const value = cell == null ? "" : String(cell);
+      td.setAttribute("data-label", columns[cellIndex] || "");
       if (isBadgeColumn(columns[cellIndex])) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
       } else if (cellIndex === 0 && (isCompare || columns.length <= 2)) {
@@ -2739,6 +2823,14 @@ function buildProductTableSection(tabla, index) {
       }
       tr.appendChild(td);
     });
+    if (canAddModels) {
+      const actionTd = document.createElement("td");
+      actionTd.className = "table-row-action";
+      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Quote" : "Cotizar");
+      const model = String(fila[modelColIndex] == null ? "" : fila[modelColIndex]).trim();
+      if (model) actionTd.appendChild(buildAddModelButton(model));
+      tr.appendChild(actionTd);
+    }
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
@@ -2746,6 +2838,14 @@ function buildProductTableSection(tabla, index) {
   tableWrap.appendChild(table);
   contentDiv.appendChild(tableWrap);
   tableDiv.appendChild(contentDiv);
+
+  if (canAddModels) {
+    tableDiv.addEventListener("click", (event) => {
+      const addBtn = event.target.closest(".table-add-model-btn");
+      if (!addBtn) return;
+      addTableModelToCart(addBtn.dataset.model);
+    });
+  }
 
   if (filtersEnabled) bindTableFilters(tableDiv, tabla);
 
