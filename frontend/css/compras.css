@@ -5157,9 +5157,10 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 }
 
 .cart-added-dock {
+  --cart-dock-bottom-offset: 172px;
   position: fixed;
   right: 18px;
-  bottom: 22px;
+  bottom: calc(var(--cart-dock-bottom-offset) + env(safe-area-inset-bottom, 0px));
   z-index: 12100;
   width: min(360px, calc(100vw - 24px));
   padding: 14px 14px 12px;
@@ -5271,9 +5272,9 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 
 @media (max-width: 900px) {
   .cart-added-dock {
+    --cart-dock-bottom-offset: 188px;
     left: 12px;
     right: 12px;
-    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
     width: auto;
   }
 }
