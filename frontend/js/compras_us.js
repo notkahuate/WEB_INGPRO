@@ -596,7 +596,7 @@ function renderSpecsPreview(product) {
   const preview = document.getElementById("product-specs-preview");
   if (!preview) return;
 
-  const MAX_KPI = 7; // total máximo incluyendo industria
+  const MAX_KPI = 6;
   const industryKpi = resolveProductIndustryKpi(product);
   const specs = resolveSpecifications(product).filter((spec) => {
     if (!spec.label && !spec.value) return false;
@@ -2077,6 +2077,10 @@ function isBadgeColumn(columnName) {
   return /voltage|tensi[oó]n|voltaje|poles|polos/i.test(String(columnName || ""));
 }
 
+function isModelColumn(columnName) {
+  return /\bmodel(o|os)?s?\b/i.test(String(columnName || "").trim());
+}
+
 function applyTableFilters(tableSection, tabla) {
   const tbody = tableSection.querySelector("tbody");
   const toolbar = tableSection.querySelector(".table-filters-toolbar");
@@ -2872,6 +2876,8 @@ function buildProductTableSection(tabla, index) {
       td.setAttribute("data-label", columns[cellIndex] || "");
       if (isBadgeColumn(columns[cellIndex])) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
+      } else if (isModelColumn(columns[cellIndex])) {
+        td.innerHTML = `<span class="table-model-chip">${escapeHtml(value)}</span>`;
       } else if (cellIndex === 0 && (isCompare || columns.length <= 2)) {
         td.innerHTML = `<b>${escapeHtml(value)}</b>`;
       } else {
