@@ -1872,6 +1872,10 @@ function analyzeTableColumns(tabla) {
       .map((value) => parseNumericCell(value))
       .filter((num) => !Number.isNaN(num));
 
+    if (isDatasheetColumn(columnName)) {
+      return { columnName, columnIndex, type: "none", unique: [] };
+    }
+
     const explicit = columnConfig[columnName];
     if (explicit === false || explicit === "none") {
       return { columnName, columnIndex, type: "none", unique };
@@ -2066,6 +2070,45 @@ function isModelColumn(columnName) {
 
 function isBadgeColumn(columnName) {
   return /voltage|tensi[oó]n|voltaje|poles|polos/i.test(String(columnName || ""));
+}
+
+function isDatasheetColumn(columnName) {
+  return /datasheet|data\s*sheet|hoja\s*de\s*datos|ficha\s*t[eé]cnica/i.test(
+    String(columnName || "").trim()
+  );
+}
+
+function extractTableLinkUrl(value) {
+  const text = String(value == null ? "" : value).trim();
+  if (!text) return "";
+  const markdown = text.match(/\[[^\]]*\]\((https?:\/\/[^)\s]+)\)/i);
+  if (markdown) return markdown[1];
+  const href = text.match(/href\s*=\s*["'](https?:\/\/[^"']+|\/[^"']+)["']/i);
+  if (href) return href[1];
+  const absolute = text.match(/https?:\/\/[^\s"'<>]+/i);
+  if (absolute) return absolute[0].replace(/[),.;]+$/, "");
+  if (/^www\./i.test(text)) return `https://${text}`;
+  if (/^\/\/[^\s"'<>]+/i.test(text)) return `https:${text}`;
+  if (/^\/[^\s"'<>]+\.(pdf|docx?|xlsx?|zip)(?:\?[^\s"'<>]*)?$/i.test(text)) return text;
+  return "";
+}
+
+function buildDatasheetLink(value) {
+  const url = extractTableLinkUrl(value);
+  const label = COMPRAS_IS_ENGLISH ? "View datasheet" : "Ver datasheet";
+  if (!url) {
+    const span = document.createElement("span");
+    span.className = "table-datasheet-btn table-datasheet-btn--disabled";
+    span.textContent = COMPRAS_IS_ENGLISH ? "Unavailable" : "No disponible";
+    return span;
+  }
+  const link = document.createElement("a");
+  link.className = "table-datasheet-btn";
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = label;
+  return link;
 }
 
 function applyTableFilters(tableSection, tabla) {
@@ -2861,7 +2904,14 @@ function buildProductTableSection(tabla, index) {
       const td = document.createElement("td");
       const value = cell == null ? "" : String(cell);
       td.setAttribute("data-label", columns[cellIndex] || "");
-      if (isBadgeColumn(columns[cellIndex])) {
+      const rowLabel = String(fila[0] ?? "");
+      const asDatasheet =
+        isDatasheetColumn(columns[cellIndex]) ||
+        (cellIndex > 0 && isDatasheetColumn(rowLabel));
+      if (asDatasheet) {
+        td.classList.add("table-datasheet-cell");
+        td.appendChild(buildDatasheetLink(value));
+      } else if (isBadgeColumn(columns[cellIndex])) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
       } else if (isModelColumn(columns[cellIndex])) {
         td.innerHTML = `<span class="table-model-chip">${escapeHtml(value)}</span>`;
@@ -2937,6 +2987,79 @@ function buildStrapiMediaUrl(url) {
   return `${STRAPI_SECTIONS_BASE}${url.startsWith('/') ? url : `/${url}`}`;
 }
 
+function formatCmsInline(text) {
+  return escapeHtml(String(text))
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+}
+
+function isCmsBulletLine(line) {
+  return /^[-*•]\s+\S/.test(line);
+}
+
+function isCmsNumberedLine(line) {
+  return /^\d+[.)]\s+\S/.test(line);
+}
+
+function stripCmsBullet(line) {
+  return String(line).replace(/^[-*•]\s+/, '');
+}
+
+function parseCmsTitle(titulo) {
+  const raw = String(titulo || '').trim();
+  const numbered = raw.match(/^(\d{1,2})\s*\/\s*(.+)$/);
+  const rest = numbered ? numbered[2].trim() : raw;
+  const parts = rest.split(/\s+[—–]\s+/);
+  return {
+    number: numbered ? String(numbered[1]).padStart(2, '0') : '',
+    heading: (parts[0] || rest).trim(),
+    subtitle: parts.slice(1).join(' — ').trim(),
+  };
+}
+
+function renderCmsBulletList(items) {
+  const texts = items.map(stripCmsBullet);
+  const short = texts.length >= 2 && texts.every((item) => item.length <= 48);
+  if (short) {
+    return (
+      `<ul class="cms-chip-list">` +
+      texts.map((item) => `<li class="cms-chip">${formatCmsInline(item)}</li>`).join('') +
+      `</ul>`
+    );
+  }
+  return (
+    `<ul class="cms-feature-list">` +
+    texts
+      .map(
+        (item) =>
+          `<li class="cms-feature">` +
+          `<span class="cms-feature__mark" aria-hidden="true"></span>` +
+          `<span class="cms-feature__text">${formatCmsInline(item)}</span>` +
+          `</li>`
+      )
+      .join('') +
+    `</ul>`
+  );
+}
+
+function looksLikeCmsSpecBlock(lines) {
+  if (lines.length < 2 || lines.length > 5) return false;
+  if (lines.some((line) => isCmsBulletLine(line) || isCmsNumberedLine(line))) return false;
+  if (lines[0].length > 90) return false;
+  const titleLooksLikeLabel = !/[.!?]$/.test(lines[0]);
+  const shortLines = lines.filter((line) => line.length <= 78).length;
+  return titleLooksLikeLabel && shortLines >= Math.ceil(lines.length * 0.6);
+}
+
+function renderCmsLabeledBlock(label, innerHtml) {
+  return (
+    `<div class="cms-labeled-block">` +
+    `<h4 class="cms-block-label">${formatCmsInline(label)}</h4>` +
+    innerHtml +
+    `</div>`
+  );
+}
+
 function renderMarkdownBasic(text) {
   if (!text) return '';
   const raw = String(text).replace(/\r\n/g, '\n').trim();
@@ -2944,14 +3067,22 @@ function renderMarkdownBasic(text) {
 
   const blocks = raw.split(/\n\n+/).filter(Boolean);
   const html = [];
+  let specBuffer = [];
   let i = 0;
+
+  const flushSpecs = () => {
+    if (!specBuffer.length) return;
+    const cls = specBuffer.length > 1 ? 'cms-spec-grid' : 'cms-spec-stack';
+    html.push(`<div class="${cls}">${specBuffer.join('')}</div>`);
+    specBuffer = [];
+  };
 
   while (i < blocks.length) {
     const block = blocks[i];
     const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
 
-    // Lista simple: "1. Item" en líneas consecutivas
-    if (lines.length >= 2 && lines.every((l) => /^\d+[.)]\s+\S/.test(l))) {
+    if (lines.length >= 2 && lines.every((l) => isCmsNumberedLine(l))) {
+      flushSpecs();
       html.push(
         `<ol class="cms-step-list">` +
           lines
@@ -2962,7 +3093,7 @@ function renderMarkdownBasic(text) {
               return (
                 `<li class="cms-step-list__item">` +
                 `<span class="cms-step-list__num" aria-hidden="true">${escapeHtml(num)}</span>` +
-                `<span class="cms-step-list__text">${escapeHtml(label)}</span>` +
+                `<span class="cms-step-list__text">${formatCmsInline(label)}</span>` +
                 `</li>`
               );
             })
@@ -2973,9 +3104,23 @@ function renderMarkdownBasic(text) {
       continue;
     }
 
-    // Paso tipo "01. Título" (+ siguiente bloque como descripción)
+    const bulletStart = lines.findIndex(isCmsBulletLine);
+    if (bulletStart !== -1 && lines.slice(bulletStart).every(isCmsBulletLine)) {
+      flushSpecs();
+      const listHtml = renderCmsBulletList(lines.slice(bulletStart));
+      const headingLines = lines.slice(0, bulletStart);
+      html.push(
+        headingLines.length
+          ? renderCmsLabeledBlock(headingLines.join(' '), listHtml)
+          : listHtml
+      );
+      i += 1;
+      continue;
+    }
+
     const stepMatch = block.match(/^(\d{1,2})[.)]\s+(.+)$/s);
     if (stepMatch && !block.includes('\n\n')) {
+      flushSpecs();
       const num = String(stepMatch[1]).padStart(2, '0');
       const titleLine = String(stepMatch[2]).trim();
       const titleParts = titleLine.split('\n');
@@ -2990,9 +3135,9 @@ function renderMarkdownBasic(text) {
         `<div class="cms-step">` +
           `<span class="cms-step__num" aria-hidden="true">${escapeHtml(num)}</span>` +
           `<div class="cms-step__body">` +
-          `<h4 class="cms-step__title">${escapeHtml(title)}</h4>` +
+          `<h4 class="cms-step__title">${formatCmsInline(title)}</h4>` +
           (desc
-            ? `<p class="cms-step__desc">${escapeHtml(desc).replace(/\n/g, '<br>')}</p>`
+            ? `<p class="cms-step__desc">${formatCmsInline(desc).replace(/\n/g, '<br>')}</p>`
             : '') +
           `</div></div>`
       );
@@ -3000,9 +3145,9 @@ function renderMarkdownBasic(text) {
       continue;
     }
 
-    // Imagen markdown: ![alt](url)
     const mdImage = block.match(/^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/);
     if (mdImage) {
+      flushSpecs();
       const alt = escapeHtml(mdImage[1] || 'Imagen');
       const src = escapeHtml(mdImage[2]);
       html.push(
@@ -3012,22 +3157,84 @@ function renderMarkdownBasic(text) {
       continue;
     }
 
-    html.push(`<p>${escapeHtml(block).replace(/\n/g, '<br>')}</p>`);
+    const headingMatch = lines[0] && lines[0].match(/^(#{2,4})\s+(.+)$/);
+    if (headingMatch) {
+      flushSpecs();
+      const level = Math.min(headingMatch[1].length, 4);
+      const rest = lines.slice(1);
+      html.push(`<h${level} class="cms-md-heading">${formatCmsInline(headingMatch[2])}</h${level}>`);
+      if (rest.length) {
+        html.push(`<p>${rest.map((line) => formatCmsInline(line)).join('<br>')}</p>`);
+      }
+      i += 1;
+      continue;
+    }
+
+    const noteLabel = lines[0] && lines[0].match(/^(nota|note|importante|important|aviso)\s*:?$/i);
+    if (noteLabel) {
+      const noteLines = lines.length >= 2 ? lines.slice(1) : [];
+      if (!noteLines.length && blocks[i + 1]) {
+        noteLines.push(...String(blocks[i + 1]).split('\n').map((line) => line.trim()).filter(Boolean));
+        i += 1;
+      }
+      if (noteLines.length) {
+        flushSpecs();
+        html.push(
+          `<aside class="cms-note">` +
+          `<span class="cms-note__label">${formatCmsInline(lines[0].replace(/:$/, ''))}</span>` +
+          `<p class="cms-note__text">${noteLines.map((line) => formatCmsInline(line)).join('<br>')}</p>` +
+          `</aside>`
+        );
+        i += 1;
+        continue;
+      }
+    }
+
+    if (looksLikeCmsSpecBlock(lines)) {
+      specBuffer.push(
+        `<article class="cms-spec-card">` +
+        `<h4 class="cms-spec-card__title">${formatCmsInline(lines[0])}</h4>` +
+        lines
+          .slice(1)
+          .map((line) => `<p class="cms-spec-card__value">${formatCmsInline(line)}</p>`)
+          .join('') +
+        `</article>`
+      );
+      i += 1;
+      continue;
+    }
+
+    if (lines.length === 1 && lines[0].length <= 72 && !/[.!?]$/.test(lines[0])) {
+      flushSpecs();
+      html.push(`<h4 class="cms-block-label">${formatCmsInline(lines[0])}</h4>`);
+      i += 1;
+      continue;
+    }
+
+    flushSpecs();
+    html.push(`<p>${lines.map((line) => formatCmsInline(line)).join('<br>')}</p>`);
     i += 1;
+  }
+
+  flushSpecs();
+
+  if (html[0] && html[0].startsWith('<p>')) {
+    html[0] = html[0].replace('<p>', '<p class="cms-seccion-lead">');
   }
 
   return html.join('');
 }
 
-function renderCmsSeccionesCard(seccion) {
+function renderCmsSeccionesCard(seccion, index) {
   const hasImages = Array.isArray(seccion.imagenes) && seccion.imagenes.length > 0;
+  const title = parseCmsTitle(seccion.titulo);
   const imagesHtml = hasImages
     ? `<div class="cms-seccion-gallery${seccion.imagenes.length === 1 ? ' cms-seccion-gallery--single' : ''}">` +
       seccion.imagenes
         .map(
           (img) =>
             `<figure class="cms-seccion-image">` +
-            `<img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt || seccion.titulo)}" loading="lazy">` +
+            `<img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt || title.heading)}" loading="lazy">` +
             `</figure>`
         )
         .join('') +
@@ -3041,10 +3248,21 @@ function renderCmsSeccionesCard(seccion) {
   const layoutClass = hasImages
     ? 'cms-seccion-layout cms-seccion-layout--media'
     : 'cms-seccion-layout';
+  const altClass = index % 2 === 1 ? ' cms-seccion-card--alt' : '';
 
   return (
-    `<article class="cms-seccion-card">` +
-    `<h3 class="cms-seccion-title">${escapeHtml(seccion.titulo)}</h3>` +
+    `<article class="cms-seccion-card${altClass}">` +
+    `<header class="cms-seccion-header">` +
+    (title.number
+      ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`
+      : '') +
+    `<div class="cms-seccion-heading">` +
+    `<h3 class="cms-seccion-title">${escapeHtml(title.heading)}</h3>` +
+    (title.subtitle
+      ? `<p class="cms-seccion-subtitle">${escapeHtml(title.subtitle)}</p>`
+      : '') +
+    `</div>` +
+    `</header>` +
     `<div class="${layoutClass}">` +
     imagesHtml +
     infoHtml +
