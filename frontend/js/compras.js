@@ -666,19 +666,39 @@ function renderSpecsSection(product) {
 
 function splitPackageText(value) {
   return String(value || "")
-    .split(/\n|;|•|·|\||,(?=\s)/)
-    .map((part) => part.trim())
+    .split(/\s*,\s*|\n+|•|·|;/)
+    .map((part) => part.replace(/^[-–—]\s*/, "").trim())
     .filter(Boolean);
 }
 
-function resolvePackageItems(product) {
-  const items = [];
+function getPackageProductLabel(product) {
+  return String(product?.name || product?.sku || product?.item_id || "").trim();
+}
+
+function packageItemIcon(item, isProduct) {
+  if (isProduct) return "fa-box-open";
+  const key = normalizar(item);
+  if (/cable|arnes|harness|plug|conector/.test(key)) return "fa-plug";
+  if (/manual|guia|guide/.test(key)) return "fa-book";
+  if (/control|panel|ats/.test(key)) return "fa-sliders";
+  if (/bateria|battery/.test(key)) return "fa-car-battery";
+  if (/tanque|tank|combustible|fuel/.test(key)) return "fa-oil-can";
+  if (/filtro|filter/.test(key)) return "fa-filter";
+  if (/silenci|muffler|exhaust/.test(key)) return "fa-volume-xmark";
+  if (/alternador|alternator/.test(key)) return "fa-bolt";
+  if (/motor|engine/.test(key)) return "fa-gears";
+  if (/rueda|wheel/.test(key)) return "fa-circle";
+  return "fa-cube";
+}
+
+function collectPackageExtras(product) {
+  const extras = [];
   const directFields = [
+    "cf_en_el_paquete",
     "en_el_paquete",
     "in_the_box",
     "package_contents",
     "contenido_paquete",
-    "cf_en_el_paquete"
   ];
 
   directFields.forEach((field) => {
@@ -686,59 +706,46 @@ function resolvePackageItems(product) {
     if (!value) return;
 
     if (Array.isArray(value)) {
-      items.push(...value);
+      extras.push(...value);
       return;
     }
 
     const parsed = parseProductJsonField(value);
     if (Array.isArray(parsed)) {
-      items.push(...parsed);
+      extras.push(...parsed);
       return;
     }
 
     if (typeof parsed === "object" && parsed !== null && Array.isArray(parsed.items)) {
-      items.push(...parsed.items);
+      extras.push(...parsed.items);
       return;
     }
 
     if (typeof value === "string") {
-      items.push(...splitPackageText(value));
+      extras.push(...splitPackageText(value));
     }
   });
 
-  const description = parseProductJsonField(product.description);
-  if (description && Array.isArray(description.secciones)) {
-    description.secciones.forEach((section) => {
-      const type = String(section.tipo || "").toLowerCase();
-      const title = resolveLocalizedText(section.titulo).toLowerCase();
-      const isPackageSection =
-        ["paquete", "lista", "inbox", "in_the_box", "contenido"].includes(type) ||
-        /paquete|incluye|contenido|box|package/.test(title);
+  return extras;
+}
 
-      if (!isPackageSection) return;
+function resolvePackageItems(product) {
+  const extras = collectPackageExtras(product);
+  const productLabel = getPackageProductLabel(product);
+  const seen = new Set();
+  const items = [];
 
-      if (Array.isArray(section.items)) {
-        items.push(...section.items);
-      } else if (section.contenido) {
-        items.push(...splitPackageText(resolveLocalizedText(section.contenido)));
-      }
-    });
-  } else if (typeof product.description === "string" && product.description.trim()) {
-    const plain = product.description.replace(/\s+/g, " ").trim();
-    const includeMatch = plain.match(/(?:incluye|contenido del paquete|en el paquete)\s*:?\s*(.+)$/i);
-    if (includeMatch) {
-      items.push(...splitPackageText(includeMatch[1]));
-    }
-  }
+  const push = (value) => {
+    const clean = String(value || "").trim();
+    const key = normalizar(clean);
+    if (!clean || seen.has(key)) return;
+    seen.add(key);
+    items.push(clean);
+  };
 
-  if (items.length === 0) {
-    if (product.name) items.push(product.name);
-    if (product.sku) {
-      items.push(COMPRAS_IS_ENGLISH ? `SKU: ${product.sku}` : `Referencia: ${product.sku}`);
-    }
-  }
-
-  return [...new Set(items.map((item) => String(item).trim()).filter(Boolean))];
+  push(productLabel);
+  extras.forEach(push);
+  return items;
 }
 
 function renderInboxContent(product) {
@@ -750,13 +757,32 @@ function renderInboxContent(product) {
     ? "Package contents are not available for this product."
     : "No hay contenido del paquete disponible para este producto.";
 
+  container.classList.remove("info-card", "info-card--package");
+  container.classList.add("package-card-grid");
+
   if (!items.length) {
+    container.classList.remove("package-card-grid");
+    container.classList.add("info-card", "info-card--package");
     container.innerHTML = `<p class="info-card-empty">${emptyMessage}</p>`;
     return;
   }
 
-  container.innerHTML =
-    `<ul class="package-list">${items.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`;
+  const productTag = COMPRAS_IS_ENGLISH ? "Product" : "Producto";
+  const includedTag = COMPRAS_IS_ENGLISH ? "Included" : "Incluido";
+
+  container.innerHTML = items
+    .map((item, index) => {
+      const isProduct = index === 0;
+      const icon = packageItemIcon(item, isProduct);
+      return (
+        `<article class="package-card${isProduct ? " package-card--product" : ""}">` +
+        `<span class="package-card-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></span>` +
+        `<strong class="package-card-title">${escapeHtml(item)}</strong>` +
+        `<span class="package-card-tag">${isProduct ? productTag : includedTag}</span>` +
+        `</article>`
+      );
+    })
+    .join("");
 }
 
 function parseDocUrls(value) {
