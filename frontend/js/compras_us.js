@@ -409,7 +409,7 @@ function resolveLocalizedText(value, preferEnglish) {
 function setDescriptionSubtitle(titleEl, title) {
   if (!titleEl) return;
   const clean = String(title || "").trim();
-  const isGeneric = /^(description|descripcion)$/i.test(normalizar(clean));
+  const isGeneric = /^(product\s+)?description$|descripcion(\s+del\s+producto)?$/i.test(normalizar(clean));
   if (!clean || isGeneric) {
     titleEl.textContent = "";
     titleEl.hidden = true;
@@ -1366,9 +1366,8 @@ function loadSelectedProduct() {
       descriptionData.titulo &&
       Array.isArray(descriptionData.secciones)
     ) {
-      // Formato JSON bilingüe: titulo/contenido = string o { es, en }
-      const localizedTitle = resolveLocalizedText(descriptionData.titulo);
-      setDescriptionSubtitle(descriptionTitle, localizedTitle);
+      // Formato JSON bilingüe: no mostrar description.titulo (ya está la pestaña Descripción)
+      setDescriptionSubtitle(descriptionTitle, "");
       if (descriptionList) {
         const resultado = descriptionData.secciones
           .map((seccion) => {
