@@ -3060,6 +3060,68 @@ function renderCmsLabeledBlock(label, innerHtml) {
   );
 }
 
+function unwrapCmsHtmlFences(text) {
+  let raw = String(text || '').replace(/\r\n/g, '\n').trim();
+  if (!raw) return '';
+  const fenced = raw.match(/^```(?:html|HTML)?\s*\n([\s\S]*?)\n?```$/);
+  if (fenced) return fenced[1].trim();
+  if (/^```/.test(raw)) {
+    raw = raw.replace(/^```(?:html|HTML)?\s*\n?/, '').replace(/\n?```\s*$/, '').trim();
+  }
+  return raw;
+}
+
+function looksLikeCmsHtml(text) {
+  const raw = unwrapCmsHtmlFences(text);
+  if (!raw) return false;
+  return /<(section|div|article|ul|ol|table|h[1-6]|p|style|header|aside)\b/i.test(raw);
+}
+
+function sanitizeCmsHtml(html) {
+  if (typeof document === 'undefined') return String(html || '');
+  const template = document.createElement('template');
+  template.innerHTML = String(html || '');
+  const forbidden = new Set([
+    'SCRIPT', 'IFRAME', 'OBJECT', 'EMBED', 'LINK', 'META', 'BASE',
+    'FORM', 'INPUT', 'TEXTAREA', 'SELECT', 'BUTTON',
+  ]);
+
+  const walk = (node) => {
+    [...node.childNodes].forEach((child) => {
+      if (child.nodeType !== 1) return;
+      if (forbidden.has(child.tagName)) {
+        child.remove();
+        return;
+      }
+      [...child.attributes].forEach((attr) => {
+        const name = attr.name.toLowerCase();
+        const value = String(attr.value || '');
+        if (name.startsWith('on')) child.removeAttribute(attr.name);
+        if ((name === 'href' || name === 'src' || name === 'xlink:href') && /^\s*javascript:/i.test(value)) {
+          child.removeAttribute(attr.name);
+        }
+      });
+      if (child.tagName === 'STYLE') {
+        child.textContent = String(child.textContent || '')
+          .replace(/@import[^;]+;/gi, '')
+          .replace(/expression\s*\(/gi, '');
+      }
+      walk(child);
+    });
+  };
+
+  walk(template.content);
+  return template.innerHTML;
+}
+
+function renderCmsSectionBody(text) {
+  const unwrapped = unwrapCmsHtmlFences(text);
+  if (looksLikeCmsHtml(unwrapped)) {
+    return `<div class="cms-seccion-html">${sanitizeCmsHtml(unwrapped)}</div>`;
+  }
+  return renderMarkdownBasic(text);
+}
+
 function renderMarkdownBasic(text) {
   if (!text) return '';
   const raw = String(text).replace(/\r\n/g, '\n').trim();
@@ -3241,17 +3303,19 @@ function renderCmsSeccionesCard(seccion, index) {
       `</div>`
     : '';
 
+  const isHtml = looksLikeCmsHtml(seccion.informacion);
   const infoHtml = seccion.informacion
-    ? `<div class="cms-seccion-body content-text">${renderMarkdownBasic(seccion.informacion)}</div>`
+    ? `<div class="cms-seccion-body content-text${isHtml ? ' cms-seccion-body--html' : ''}">${renderCmsSectionBody(seccion.informacion)}</div>`
     : '';
 
   const layoutClass = hasImages
     ? 'cms-seccion-layout cms-seccion-layout--media'
     : 'cms-seccion-layout';
   const altClass = index % 2 === 1 ? ' cms-seccion-card--alt' : '';
+  const htmlClass = isHtml ? ' cms-seccion-card--html' : '';
 
   return (
-    `<article class="cms-seccion-card${altClass}">` +
+    `<article class="cms-seccion-card${altClass}${htmlClass}">` +
     `<header class="cms-seccion-header">` +
     (title.number
       ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`

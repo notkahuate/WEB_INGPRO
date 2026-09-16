@@ -5,7 +5,7 @@
     "singularName": "seccion",
     "pluralName": "secciones",
     "displayName": "Seccion",
-    "description": "Secciones de contenido e imágenes vinculadas a un producto. titulo/informacion = español; titulo_en/informacion_en = inglés."
+    "description": "Secciones de contenido e imágenes vinculadas a un producto. titulo/informacion = español; titulo_en/informacion_en = inglés. informacion acepta HTML o texto."
   },
   "options": {
     "draftAndPublish": false
@@ -21,11 +21,13 @@
       "required": false
     },
     "informacion": {
-      "type": "richtext"
+      "type": "text",
+      "description": "Contenido ES. Acepta HTML (recomendado, con estilos inline) o texto/markdown. No envolver en ```. La web detecta HTML y lo pinta; si es texto, lo formatea."
     },
     "informacion_en": {
-      "type": "richtext",
-      "required": false
+      "type": "text",
+      "required": false,
+      "description": "Contenido EN. Mismo formato que informacion: HTML o texto. Si está vacío, la ficha EN usa informacion."
     },
     "imagenes": {
       "type": "media",

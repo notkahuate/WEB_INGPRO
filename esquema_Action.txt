@@ -74,7 +74,7 @@
       "post": {
         "operationId": "crearProducto",
         "summary": "Crear producto",
-        "description": "Crea un producto. Body obligatorio: { data: { ... } }. item_id es obligatorio y único.",
+        "description": "Crea un producto. Body obligatorio: { data: { ... } }. item_id es obligatorio y único. Si el usuario no da código, asigna el siguiente número >= 1590 (string). NUNCA uses el id numérico de Strapi como item_id. NUNCA inventes códigos con letras si no los dieron.",
         "requestBody": {
           "required": true,
           "content": {
@@ -203,7 +203,7 @@
       "post": {
         "operationId": "crearSeccion",
         "summary": "Crear sección CMS y asignarla a un producto",
-        "description": "Crea una sección. titulo es obligatorio (español). titulo_en e informacion_en son el nombre y el contenido en inglés. producto debe ser el ID NUMÉRICO del producto Strapi (no item_id). orden entero (1,2,3...). imagenes opcionales como array de IDs de media ya subidos.",
+        "description": "Crea una sección. titulo obligatorio (español). informacion e informacion_en PREFERIDOS en HTML (mismos estilos, distinto idioma). PROHIBIDO envolver el HTML en markdown fences. Si el usuario da un ejemplo HTML, copia esa estructura. producto = ID NUMÉRICO Strapi (no item_id). orden entero. imagenes = IDs de media.",
         "requestBody": {
           "required": true,
           "content": {
@@ -327,7 +327,7 @@
         "type": "object",
         "description": "Campos del producto. En POST, item_id es obligatorio. En PUT envía solo lo que cambia, excepto JSON (description, especificaciones, tablas) que se envían completos.",
         "properties": {
-          "item_id": { "type": "string", "description": "Código único de catálogo. Obligatorio al crear." },
+          "item_id": { "type": "string", "description": "Código único de catálogo. Obligatorio al crear. NO es el id de Strapi. Si no dan código: GET productos, toma item_id numéricos, siguiente = max(1590, max+1) como string '1590'." },
           "name": { "type": "string" },
           "description": { "$ref": "#/components/schemas/Description" },
           "brand": { "type": "string" },
@@ -392,11 +392,11 @@
           },
           "informacion": {
             "type": "string",
-            "description": "Contenido en español. Texto o markdown simple. Listas 1. 2. 3. se ven bien en la web."
+            "description": "Contenido ES. Preferir HTML con estilos inline (paleta INGPRO: #073b7a, #0757c9, #64748b, cards blancas, grid). También acepta texto/markdown. NO envolver en ```. Sin script/iframe/onclick."
           },
           "informacion_en": {
             "type": "string",
-            "description": "Contenido en inglés. Si falta, la ficha EN usa informacion."
+            "description": "Contenido EN. Mismo HTML/layout que informacion, textos en inglés. Si falta, la ficha EN usa informacion."
           },
           "orden": {
             "type": "integer",

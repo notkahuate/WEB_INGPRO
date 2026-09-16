@@ -5013,12 +5013,34 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   text-transform: uppercase;
 }
 
-.compras-page-content .cms-note__text {
-  margin: 0;
-  color: #5c4a28;
-  font-size: 14.5px;
-  font-weight: 500;
-  line-height: 1.55;
+.compras-page-content .cms-seccion-body--html {
+  display: block;
+  font-size: inherit;
+  font-weight: inherit;
+  color: inherit;
+  line-height: inherit;
+}
+
+.compras-page-content .cms-seccion-html {
+  width: 100%;
+  min-width: 0;
+}
+
+.compras-page-content .cms-seccion-html > section,
+.compras-page-content .cms-seccion-html > div {
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.compras-page-content .cms-seccion-card--html {
+  padding: 22px 22px 18px;
+}
+
+.compras-page-content .cms-seccion-card--html .cms-seccion-layout {
+  gap: 12px;
 }
 
 .compras-page-content .cms-seccion-gallery {

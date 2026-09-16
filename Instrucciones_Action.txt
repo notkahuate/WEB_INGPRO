@@ -15,6 +15,14 @@ PRODUCTOS
 - listarProductos GET /api/productos. Filtros: filters[item_id][$eq]=, filters[sku][$eq]=, filters[name][$containsi]=, pagination[pageSize]=100, populate=* si hace falta.
 - obtenerProducto GET /api/productos/{id} (id numérico).
 - crearProducto POST. Obligatorio item_id único. Recomendado: name, brand=cf_marca, sku, status (active), cf_categoria/categoria, origen, last_modified_time ISO. Si item_id existe, no inventes otro: pregunta.
+ITEM_ID AL CREAR:
+- item_id = código de catálogo (string). NUNCA uses el id numérico de Strapi como item_id.
+- Si el usuario da un código (SKU, Q347TEH, etc.), úsalo tal cual tras verificar que no exista.
+- Si NO dan item_id, NO inventes letras ni IDs al azar. Asigna el siguiente número entero >= 1590:
+  1) GET /api/productos?pagination[pageSize]=100&sort=id:desc (repite página si hace falta).
+  2) De attributes.item_id, toma solo los que sean numéricos puros.
+  3) siguiente = max(1590, maxEncontrado+1), guardado como string ("1590", "1591"...).
+  4) Confirma el item_id asignado.
 - actualizarProducto PUT /api/productos/{id}. Solo campos pedidos. description, especificaciones o tablas: GET primero, conserva el resto, envía el JSON COMPLETO del campo (Strapi lo reemplaza entero). Tras éxito: id, item_id, campos cambiados. Nunca afirmes éxito si hubo error.
 
 No subas PDF/fotos por estas acciones. URLs: imagen_url, imagenes_url, datasheet_url, user_manual, manuales_url, quickstart_url. O el usuario sube en panel (Datasheet, Manuales, Guía rápida, Imagenes); media copia URL al guardar. NO borres links viejos si no pidieron cambiarlos.
@@ -36,8 +44,15 @@ SECCIONES CMS
 - listarSecciones GET /api/secciones. filters[producto][id][$eq]=12 o filters[producto][item_id][$eq]=CODIGO. populate=imagenes,producto sort=orden:asc pagination[pageSize]=100
 - obtenerSeccionesPorItemId GET /api/secciones/producto/{itemId} — itemId = item_id string, NO id numérico (lo usa la web).
 - obtenerSeccion GET /api/secciones/{id} — id numérico.
-- crearSeccion POST. Obligatorio: titulo, producto = ID NUMÉRICO (nunca item_id). Recomendado: informacion (ES, markdown/listas 1. 2. 3.), titulo_en, informacion_en, orden (si no dan: max+1 o 1).
-Ej: {"data":{"titulo":"Aplicaciones","titulo_en":"Applications","informacion":"1. Minería\n2. Oil & gas","informacion_en":"1. Mining\n2. Oil & gas","orden":1,"producto":12}}
+- crearSeccion POST. Obligatorio: titulo, producto = ID NUMÉRICO (nunca item_id). Recomendado: informacion (HTML ES), titulo_en, informacion_en (HTML EN), orden (si no dan: max+1 o 1).
+INFORMACION = HTML (preferido). La web también acepta texto/markdown viejo.
+- Guarda HTML crudo. PROHIBIDO envolver en ``` o ```html
+- Si el usuario pega un ejemplo HTML, copia ESA estructura y cambia solo textos/datos.
+- informacion_en = el MISMO layout HTML, textos en inglés.
+- Paleta INGPRO: títulos #073b7a, acentos #0757c9, texto #64748b, cards #fff, fondo #f8fbff, bordes #dce7f5, radios 20-28px, grid de tarjetas.
+- Permitido: section, div, h2/h3, p, ul, grid, style @media. PROHIBIDO: script, iframe, onclick.
+- titulo / titulo_en siguen siendo texto corto, ej. "04 / BENEFICIOS — Por qué elegir esta serie". El HTML va SOLO en informacion.
+Ej POST: {"data":{"titulo":"04 / BENEFICIOS — Por qué elegir esta serie","titulo_en":"04 / BENEFITS — Why choose this series","informacion":"<section style='font-family:Segoe UI,Arial,sans-serif'><h2 style='color:#073b7a'>Principales beneficios</h2><div style='display:grid;grid-template-columns:repeat(3,1fr);gap:16px'><div style='background:#fff;border:1px solid #dce7f5;border-radius:20px;padding:25px'><div style='color:#0b59c7;font-size:28px;font-weight:700'>01</div><h3 style='color:#073b7a'>Titulo</h3><p style='color:#64748b'>Descripcion.</p></div></div></section>","informacion_en":"<section>...</section>","orden":4,"producto":12}}
 imagenes: IDs media ya subidos, ej. "imagenes":[45,46]. No binarios. Si no hay IDs: decir que suban en panel Seccion → Imagenes.
 - actualizarSeccion PUT /api/secciones/{id}. Solo campos pedidos. Ej: {"data":{"informacion":"..."}}, {"data":{"informacion_en":"..."}}, {"data":{"titulo":"...","titulo_en":"...","orden":2}}, {"data":{"producto":15}} para reasignar.
 Sin id de sección: resuelve producto → lista secciones → coincide por titulo; varias iguales: pregunta.

@@ -15,7 +15,8 @@
     "item_id": {
       "type": "string",
       "required": true,
-      "unique": true
+      "unique": true,
+      "description": "Código único de catálogo. NO es el id numérico de Strapi. Productos nuevos sin código: siguiente número >= 1590 (string '1590', '1591'...)."
     },
     "name": {
       "type": "text"
