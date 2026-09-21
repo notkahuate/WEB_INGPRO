@@ -3020,7 +3020,7 @@ function buildProductTableSection(tabla, index) {
     const actionTh = document.createElement("th");
     actionTh.className = "table-action-col";
     if (hasGroups) actionTh.rowSpan = 2;
-    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar";
+    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Add" : "Añadir";
     topRow.appendChild(actionTh);
   }
   thead.appendChild(topRow);
@@ -3075,7 +3075,7 @@ function buildProductTableSection(tabla, index) {
     if (canAddModels) {
       const actionTd = document.createElement("td");
       actionTd.className = "table-row-action";
-      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar");
+      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Add" : "Añadir");
       const model = String(fila[modelColIndex] == null ? "" : fila[modelColIndex]).trim();
       if (model) actionTd.appendChild(buildQuoteControls(model));
       tr.appendChild(actionTd);
