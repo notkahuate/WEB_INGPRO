@@ -4107,6 +4107,235 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   border-color: rgba(0, 75, 228, 0.22);
 }
 
+.compras-page-content .catalog-table-section {
+  border: 1px solid #e6eef8;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(2, 48, 123, 0.08);
+}
+
+.compras-page-content .catalog-table-banner {
+  width: 100%;
+  border: 0;
+  background: #f7fbff !important;
+  color: #02307B !important;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.compras-page-content .tab-content.section h3.table-title.catalog-table-banner,
+.compras-page-content .tab-content.section h3.table-title.catalog-table-banner .table-title-text,
+.compras-page-content .tab-content.section h3.table-title.catalog-table-banner .toggle-icon,
+.compras-page-content .catalog-table-banner .table-title-text,
+.compras-page-content .catalog-table-banner .toggle-icon {
+  color: #02307B !important;
+  background: transparent;
+}
+
+.compras-page-content .catalog-table-banner:hover {
+  filter: none;
+  background: #f3f8ff !important;
+}
+
+.compras-page-content .catalog-table-banner__main {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.compras-page-content .catalog-table-banner__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.compras-page-content .catalog-hz-badge {
+  flex: 0 0 auto;
+  min-width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, #02307B, #01245c);
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1;
+  box-shadow: 0 10px 20px rgba(2, 48, 123, 0.22);
+}
+
+.compras-page-content .catalog-hz-badge small {
+  display: block;
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+.compras-page-content .catalog-table-kicker {
+  color: #5b7190;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.compras-page-content .catalog-table-powered {
+  color: #7a8aa3;
+  font-size: 12px;
+}
+
+.compras-page-content .catalog-table-banner .table-title-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0b3b86 !important;
+}
+
+.compras-page-content .catalog-table-banner__aside {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.compras-page-content .catalog-models-pill {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: #edf3ff;
+  color: #02307B;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.compras-page-content .catalog-table-banner .toggle-icon {
+  background: #e8f0ff !important;
+  color: #02307B !important;
+}
+
+.compras-page-content .catalog-table-wrap {
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  padding: 0 8px 12px;
+}
+
+.compras-page-content .catalog-data-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  min-width: 980px;
+  overflow: hidden;
+}
+
+.compras-page-content .catalog-data-table thead th {
+  background: #02307B;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  padding: 12px 10px;
+  border: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.compras-page-content .catalog-data-table thead th:first-child {
+  border-top-left-radius: 16px;
+}
+
+.compras-page-content .catalog-data-table thead th:last-child {
+  border-top-right-radius: 16px;
+}
+
+.compras-page-content .catalog-data-table thead .catalog-group-th {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.compras-page-content .catalog-data-table thead .catalog-sub-th {
+  background: #0b3f96;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.compras-page-content .catalog-th-icon {
+  display: block;
+  margin: 0 auto 4px;
+  opacity: 0.9;
+}
+
+.compras-page-content .catalog-data-table tbody td {
+  background: #fff;
+  border-bottom: 1px solid #eef3fa;
+  padding: 14px 10px;
+  font-size: 13.5px;
+  color: #334155;
+  text-align: center;
+}
+
+.compras-page-content .catalog-data-table tbody tr:nth-child(even) td {
+  background: #f8fbff;
+}
+
+.compras-page-content .catalog-data-table tbody tr:hover td {
+  background: #eef5ff;
+}
+
+.compras-page-content .catalog-check-col,
+.compras-page-content .catalog-check-cell {
+  width: 42px;
+  text-align: center;
+}
+
+.compras-page-content .catalog-row-check {
+  width: 16px;
+  height: 16px;
+  accent-color: #02307B;
+}
+
+.compras-page-content .catalog-data-table .table-model-chip {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  color: #0b3b86;
+  font-weight: 800;
+  padding: 0;
+}
+
+.compras-page-content .table-quote-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.compras-page-content .table-qty-input {
+  width: 58px;
+  height: 36px;
+  border: 1px solid #d7e3f3;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  color: #02307B;
+  background: #fff;
+}
+
+.compras-page-content .catalog-data-table .table-add-model-btn,
+.compras-page-content .table-add-model-btn {
+  background: linear-gradient(135deg, #ff7a18, #f05a00);
+  box-shadow: 0 8px 16px rgba(240, 90, 0, 0.24);
+  min-width: 110px;
+  border-radius: 999px;
+}
+
 .compras-page-content .table-title.collapsible {
   cursor: pointer;
   padding: 15px 18px;
@@ -4125,6 +4354,14 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   filter: brightness(1.05);
   background: linear-gradient(180deg, #004BE4 0%, #02307B 100%);
   color: #fff !important;
+}
+
+.compras-page-content .catalog-table-banner.table-title.collapsible,
+.compras-page-content .catalog-table-banner.table-title.collapsible:hover {
+  background: #f7fbff !important;
+  color: #02307B !important;
+  filter: none;
+  border-bottom: 1px solid #e6eef8;
 }
 
 .compras-page-content .table-title.expanded {
@@ -4573,6 +4810,71 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
     box-shadow: none;
     border-radius: 0;
     background: transparent;
+  }
+
+  .compras-page-content .catalog-table-wrap {
+    overflow-x: auto;
+    padding: 0 10px 12px;
+  }
+
+  .compras-page-content .catalog-data-table,
+  .compras-page-content .catalog-data-table thead,
+  .compras-page-content .catalog-data-table tbody,
+  .compras-page-content .catalog-data-table tbody tr,
+  .compras-page-content .catalog-data-table thead th,
+  .compras-page-content .catalog-data-table tbody td,
+  .compras-page-content .catalog-data-table tbody td:first-child {
+    display: revert;
+    width: auto;
+    min-width: 0;
+    border-radius: 0;
+    box-shadow: none;
+    white-space: nowrap;
+  }
+
+  .compras-page-content .catalog-data-table {
+    display: table;
+    min-width: 860px;
+    width: 100%;
+  }
+
+  .compras-page-content .catalog-data-table thead {
+    display: table-header-group;
+  }
+
+  .compras-page-content .catalog-data-table tbody {
+    display: table-row-group;
+  }
+
+  .compras-page-content .catalog-data-table tbody tr {
+    display: table-row;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .compras-page-content .catalog-data-table tbody td,
+  .compras-page-content .catalog-data-table tbody td:first-child {
+    display: table-cell;
+    padding: 10px 8px;
+    text-align: center !important;
+    font-size: 12.5px;
+  }
+
+  .compras-page-content .catalog-data-table tbody td::before {
+    content: none;
+  }
+
+  .compras-page-content .catalog-table-banner {
+    flex-wrap: wrap;
+    padding: 14px;
+  }
+
+  .compras-page-content .catalog-hz-badge {
+    min-width: 52px;
+    height: 52px;
+    font-size: 18px;
   }
 
   .compras-page-content .spec-data-table,

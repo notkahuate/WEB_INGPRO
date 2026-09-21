@@ -72,9 +72,9 @@
 
     <div class="tabs-sticky" id="stickyTabs" aria-hidden="true">
         <div class="tabs-sticky-inner">
-            <button type="button" class="tab-button sticky-tab-btn active" data-target="description"><span>Description</span></button>
+            <button type="button" class="tab-button sticky-tab-btn" data-target="description" hidden><span>Description</span></button>
             <button type="button" class="tab-button sticky-tab-btn js-specs-tab" data-target="specs" hidden><span>Specifications</span></button>
-            <button type="button" class="tab-button sticky-tab-btn" data-target="inbox"><span>In the package</span></button>
+            <button type="button" class="tab-button sticky-tab-btn active" data-target="inbox"><span>In the package</span></button>
             <button type="button" class="tab-button sticky-tab-btn" data-target="manuals"><span>Manuals</span></button>
             <button type="button" class="tab-button sticky-tab-btn js-cms-secciones-tab" data-target="cms-secciones" hidden><span>Sections</span></button>
             <button type="button" class="tab-button sticky-tab-btn" data-target="tablas" hidden><span>Tables</span></button>
@@ -150,13 +150,13 @@
         <div class="tabs-static-wrapper" id="tabsTrigger">
             <div class="tabs-section">
                 <div class="tabs-header">
-                    <button type="button" class="tab-button active" data-target="description">
+                    <button type="button" class="tab-button" data-target="description" hidden>
                         <span>Description</span>
                     </button>
                     <button type="button" class="tab-button js-specs-tab" data-target="specs" hidden>
                         <span>Specifications</span>
                     </button>
-                    <button type="button" class="tab-button" data-target="inbox">
+                    <button type="button" class="tab-button active" data-target="inbox">
                         <span>In the package</span>
                     </button>
                     <button type="button" class="tab-button" data-target="manuals">
@@ -172,7 +172,7 @@
             </div>
         </div>
 
-                <div id="description" class="tab-content section active">
+                <div id="description" class="tab-content section" hidden>
             <div class="section-content">
                 <h2>Description</h2>
                 <div class="content-text">
@@ -193,7 +193,7 @@
                 </div>
             </div>
 
-            <div id="inbox" class="tab-content section">
+            <div id="inbox" class="tab-content section active">
                 <div class="section-content">
                     <h2>In the Package</h2>
                     <div id="inbox-content" class="package-card-grid" aria-live="polite"></div>

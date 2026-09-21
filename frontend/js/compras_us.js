@@ -968,7 +968,6 @@ function renderProductCountry(brandName) {
 }
 
 const PRODUCT_TAB_ORDER = [
-  "description",
   "specs",
   "inbox",
   "manuals",
@@ -1367,81 +1366,7 @@ function loadSelectedProduct() {
   renderSpecsSection(selectedProduct);
   renderInboxContent(selectedProduct);
   renderManualsSection(selectedProduct);
-
-  // Descripción
-  const descriptionTitle = document.getElementById("description-title");
-  const descriptionList = document.getElementById("product-features");
-
-  if (selectedProduct.description) {
-    let descriptionData = selectedProduct.description;
-
-    if (typeof descriptionData === 'string') {
-      try {
-        const parsed = JSON.parse(descriptionData);
-        if (parsed && typeof parsed === 'object') {
-          descriptionData = parsed;
-        }
-      } catch (e) {
-        // Mantener como texto plano
-      }
-    }
-
-    if (
-      descriptionData &&
-      typeof descriptionData === 'object' &&
-      descriptionData.titulo &&
-      Array.isArray(descriptionData.secciones)
-    ) {
-      // Formato JSON bilingüe: no mostrar description.titulo (ya está la pestaña Descripción)
-      setDescriptionSubtitle(descriptionTitle, "");
-      if (descriptionList) {
-        const resultado = descriptionData.secciones
-          .map((seccion) => {
-            const content = resolveLocalizedText(seccion.contenido);
-            if (!content) return "";
-            return `<p>${escapeHtml(content)}</p>`;
-          })
-          .filter(Boolean);
-        descriptionList.innerHTML = resultado
-          .map(
-            (html, i) =>
-              `<article class="desc-card" style="--d:${Math.min(i, 8) * 70}ms">${html}</article>`
-          )
-          .join("");
-      }
-    } else if (typeof descriptionData === 'string') {
-      // Formato anterior de texto plano
-      setDescriptionSubtitle(descriptionTitle, "");
-      if (descriptionList) {
-        let texto = descriptionData.replace(/\s+/g, " ").trim();
-        let partes = texto.split(/(?<=\.)\s+/);
-
-        const resultado = partes.map(p => {
-          if (p.includes(":")) {
-            const [titulo, contenido] = p.split(":");
-            const items = contenido.split(/;|,|\./).filter(i => i.trim() !== "");
-
-            return `
-              <div class="desc-block">
-                <strong>${titulo.trim()}</strong>
-                <ul>
-                  ${items.map(i => `<li>${i.trim()}</li>`).join("")}
-                </ul>
-              </div>
-            `;
-          }
-          return `<p>${p.trim()}</p>`;
-        });
-
-        descriptionList.innerHTML = resultado
-          .map(
-            (html, i) =>
-              `<article class="desc-card" style="--d:${Math.min(i, 8) * 70}ms">${html}</article>`
-          )
-          .join("");
-      }
-    }
-  }
+  hideProductDescriptionTab();
 
   // Imagen principal y miniaturas
   const mainImage = document.querySelector(".main-image img");
@@ -2198,7 +2123,7 @@ function applyTableFilters(tableSection, tabla) {
 
     if (searchTerm) {
       const rowText = normalizeFilterText(
-        Array.from(cells)
+        Array.from(row.querySelectorAll("td[data-col-index]"))
           .map((cell) => cell.textContent)
           .join(" ")
       );
@@ -2206,17 +2131,17 @@ function applyTableFilters(tableSection, tabla) {
     }
 
     Object.entries(selectFilters).forEach(([index, expected]) => {
-      const cell = cells[Number(index)];
+      const cell = row.querySelector(`td[data-col-index="${index}"]`);
       if (!cell || normalizeFilterText(cell.textContent) !== expected) show = false;
     });
 
     Object.entries(textFilters).forEach(([index, term]) => {
-      const cell = cells[Number(index)];
+      const cell = row.querySelector(`td[data-col-index="${index}"]`);
       if (!cell || !normalizeFilterText(cell.textContent).includes(term)) show = false;
     });
 
     Object.entries(rangeFilters).forEach(([index, bounds]) => {
-      const cell = cells[Number(index)];
+      const cell = row.querySelector(`td[data-col-index="${index}"]`);
       const numeric = parseNumericCell(cell ? cell.textContent : "");
       if (Number.isNaN(numeric)) {
         show = false;
@@ -2738,9 +2663,10 @@ function showCartAddedDock() {
   dock.classList.add("is-pulse");
 }
 
-function addTableModelToCart(model) {
+function addTableModelToCart(model, qty = 1) {
   const code = String(model || "").trim();
   if (!code) return;
+  const amount = Math.max(1, Number(qty) || 1);
 
   const selectedProduct = JSON.parse(localStorage.getItem("selectedProduct") || "null");
   if (!selectedProduct) return;
@@ -2752,7 +2678,7 @@ function addTableModelToCart(model) {
     partNumber: code,
     brand: selectedProduct.cf_marca || selectedProduct.brand || "",
     image: getImageUrl(selectedProduct) || "/img/no-image.png",
-    quantity: 1,
+    quantity: amount,
     categoria: selectedProduct.cf_categoria || selectedProduct.categoria || "",
     modelo: code,
   };
@@ -2761,7 +2687,7 @@ function addTableModelToCart(model) {
   const existing = cart.find(
     (entry) => String(entry.id) === String(item.id) && entry.partNumber === item.partNumber
   );
-  if (existing) existing.quantity += 1;
+  if (existing) existing.quantity += amount;
   else cart.push(item);
   sessionStorage.setItem("cartItems", JSON.stringify(cart));
   updateCartCount();
@@ -2773,8 +2699,124 @@ function buildAddModelButton(model) {
   btn.type = "button";
   btn.className = "table-add-model-btn";
   btn.dataset.model = String(model || "").trim();
-  btn.textContent = COMPRAS_IS_ENGLISH ? "Add" : "Añadir";
+  btn.innerHTML = `<span aria-hidden="true">+</span> ${COMPRAS_IS_ENGLISH ? "Add" : "Añadir"}`;
   return btn;
+}
+
+function buildQuoteControls(model) {
+  const wrap = document.createElement("div");
+  wrap.className = "table-quote-controls";
+  const qty = document.createElement("input");
+  qty.type = "number";
+  qty.min = "1";
+  qty.value = "1";
+  qty.className = "table-qty-input";
+  qty.setAttribute("aria-label", COMPRAS_IS_ENGLISH ? "Quantity" : "Cantidad");
+  wrap.appendChild(qty);
+  wrap.appendChild(buildAddModelButton(model));
+  return wrap;
+}
+
+function detectPowerColumnPair(first, second) {
+  const a = normalizar(first);
+  const b = normalizar(second);
+  if (!a || !b) return null;
+  if (/esp/.test(a) && /kva/.test(a) && /esp/.test(b) && /kw/.test(b) && !/kva/.test(b)) {
+    return { group: "ESP", subs: ["kVA", "kW"] };
+  }
+  if (/prp/.test(a) && /kva/.test(a) && /prp/.test(b) && /kw/.test(b) && !/kva/.test(b)) {
+    return { group: "PRP", subs: ["kVA", "kW"] };
+  }
+  return null;
+}
+
+function groupCatalogColumns(columns) {
+  const groups = [];
+  let i = 0;
+  while (i < columns.length) {
+    const pair = detectPowerColumnPair(columns[i], columns[i + 1]);
+    if (pair) {
+      groups.push({
+        type: "group",
+        label: pair.group,
+        indexes: [i, i + 1],
+        subs: pair.subs,
+      });
+      i += 2;
+      continue;
+    }
+    groups.push({
+      type: "single",
+      label: columns[i],
+      indexes: [i],
+    });
+    i += 1;
+  }
+  return groups;
+}
+
+function catalogColumnPresentation(name) {
+  const key = normalizar(name);
+  if (/fuel|consumo/.test(key)) {
+    return { text: String(name || ""), icon: "" };
+  }
+  if (/open|abiert/.test(key) && /l\s*\*|mm|ancho/.test(key)) {
+    return { text: "L×W×H (mm)", icon: "fa-cube" };
+  }
+  if (/(sound|insonor|cabin|sound-proof)/.test(key) && /l\s*\*|mm|ancho/.test(key)) {
+    return { text: "L×W×H (mm)", icon: "fa-cubes" };
+  }
+  return { text: String(name || ""), icon: "" };
+}
+
+function parseCatalogTableMeta(tabla) {
+  const title = String(tabla?.titulo || "").trim();
+  const hzMatch = title.match(/(\d+)\s*Hz/i);
+  const hz = hzMatch ? hzMatch[1] : "";
+  const isThree = /trifas|three\s*phase|\b400\s*v\b|220\s*\/\s*440/i.test(title);
+  const diesel = /diesel|di[eé]sel/i.test(title);
+  const rows = Array.isArray(tabla?.filas) ? tabla.filas.length : 0;
+  let product = null;
+  try {
+    product = JSON.parse(localStorage.getItem("selectedProduct") || "null");
+  } catch (_) {
+    product = null;
+  }
+  const brand = String(product?.cf_marca || product?.brand || "").trim();
+  const eyebrow = COMPRAS_IS_ENGLISH
+    ? `${diesel ? "Diesel Generator" : "Generator"}${isThree ? " | Three Phase" : ""}`
+    : `${diesel ? "Generador diésel" : "Generador"}${isThree ? " | Trifásico" : ""}`;
+  return { title, hz, isThree, brand, rows, eyebrow };
+}
+
+function hideProductDescriptionTab() {
+  document
+    .querySelectorAll('.tab-button[data-target="description"], .sticky-tab-btn[data-target="description"]')
+    .forEach((btn) => {
+      btn.hidden = true;
+      btn.classList.remove("active");
+    });
+
+  const section = document.getElementById("description");
+  if (section) {
+    section.hidden = true;
+    section.classList.remove("active");
+  }
+
+  const hasActive = document.querySelector(".tabs-header .tab-button.active:not([hidden])");
+  if (hasActive) return;
+
+  const nextBtn = document.querySelector(".tabs-header .tab-button[data-target]:not([hidden])");
+  const target = nextBtn && nextBtn.dataset.target;
+  const nextSection = target ? document.getElementById(target) : null;
+  if (nextBtn && nextSection) {
+    nextSection.hidden = false;
+    nextSection.classList.add("active");
+    nextBtn.classList.add("active");
+    document
+      .querySelectorAll(`.sticky-tab-btn[data-target="${target}"]`)
+      .forEach((btn) => btn.classList.add("active"));
+  }
 }
 
 function buildModelSelectorModule(tabla) {
@@ -2880,17 +2922,40 @@ function buildProductTableSection(tabla, index) {
   }
 
   const tableDiv = document.createElement("div");
-  tableDiv.classList.add("table-section");
+  tableDiv.classList.add("table-section", "catalog-table-section");
   if (shouldEnableTableFilters(tabla)) {
     tableDiv.classList.add("table-section--filterable");
   }
 
   const isFirst = index === 0;
-  const title = document.createElement("h3");
-  title.classList.add("table-title", "collapsible", isFirst ? "expanded" : "collapsed");
+  const meta = parseCatalogTableMeta(tabla);
+  const title = document.createElement("button");
+  title.type = "button";
+  title.classList.add("table-title", "collapsible", "catalog-table-banner", isFirst ? "expanded" : "collapsed");
+  const hzLabel = meta.hz
+    ? `${escapeHtml(meta.hz)}<small>Hz${meta.isThree ? " · T" : ""}</small>`
+    : "";
+  const modelsLabel = COMPRAS_IS_ENGLISH
+    ? `${meta.rows} MODELS`
+    : `${meta.rows} MODELOS`;
   title.innerHTML =
+    `<span class="catalog-table-banner__main">` +
+    (hzLabel ? `<span class="catalog-hz-badge">${hzLabel}</span>` : "") +
+    `<span class="catalog-table-banner__copy">` +
+    (meta.eyebrow
+      ? `<span class="catalog-table-kicker">${escapeHtml(meta.eyebrow)}</span>`
+      : "") +
+    (meta.brand
+      ? `<span class="catalog-table-powered">${COMPRAS_IS_ENGLISH ? "Powered by" : "Marca"} ${escapeHtml(meta.brand)}</span>`
+      : "") +
+    `<span class="table-title-text">${escapeHtml(meta.title)}</span>` +
+    `</span></span>` +
+    `<span class="catalog-table-banner__aside">` +
+    (meta.rows
+      ? `<span class="catalog-models-pill">${escapeHtml(modelsLabel)}</span>`
+      : "") +
     `<span class="toggle-icon" aria-hidden="true">${isFirst ? "▼" : "▶"}</span>` +
-    `<span class="table-title-text">${escapeHtml(tabla.titulo || "")}</span>`;
+    `</span>`;
   title.setAttribute("data-index", index);
   title.addEventListener("click", function () {
     toggleTable(this);
@@ -2909,39 +2974,83 @@ function buildProductTableSection(tabla, index) {
   }
 
   const tableWrap = document.createElement("div");
-  tableWrap.classList.add("table-wrap");
+  tableWrap.classList.add("table-wrap", "catalog-table-wrap");
 
   const table = document.createElement("table");
   const isCompare = isComparisonSpecTable(tabla);
-  table.classList.add("spec-data-table", "product-table");
+  table.classList.add("spec-data-table", "product-table", "catalog-data-table");
   if (isCompare) table.classList.add("spec-data-table--compare");
 
   const columns = Array.isArray(tabla.columnas) ? tabla.columnas : [];
+  const groups = groupCatalogColumns(columns);
+  const hasGroups = groups.some((group) => group.type === "group");
   const modelColIndex = findModelColumnIndex(columns);
   const canAddModels = modelColIndex >= 0;
   const thead = document.createElement("thead");
-  const headerRow = document.createElement("tr");
-  columns.forEach((col) => {
+  const topRow = document.createElement("tr");
+
+  const checkTh = document.createElement("th");
+  checkTh.className = "catalog-check-col";
+  if (hasGroups) checkTh.rowSpan = 2;
+  topRow.appendChild(checkTh);
+
+  groups.forEach((group) => {
     const th = document.createElement("th");
-    th.textContent = col;
-    headerRow.appendChild(th);
+    if (group.type === "group") {
+      th.colSpan = group.indexes.length;
+      th.className = "catalog-group-th";
+      th.textContent = group.label;
+    } else {
+      if (hasGroups) th.rowSpan = 2;
+      const present = catalogColumnPresentation(group.label);
+      if (present.icon) {
+        th.innerHTML =
+          `<span class="catalog-th-icon" aria-hidden="true"><i class="fa-solid ${present.icon}"></i></span>` +
+          `<span>${escapeHtml(present.text)}</span>`;
+      } else {
+        th.textContent = present.text;
+      }
+    }
+    topRow.appendChild(th);
   });
+
   if (canAddModels) {
     const actionTh = document.createElement("th");
     actionTh.className = "table-action-col";
-    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Quote" : "Cotizar";
-    headerRow.appendChild(actionTh);
+    if (hasGroups) actionTh.rowSpan = 2;
+    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar";
+    topRow.appendChild(actionTh);
   }
-  thead.appendChild(headerRow);
+  thead.appendChild(topRow);
+
+  if (hasGroups) {
+    const subRow = document.createElement("tr");
+    groups.forEach((group) => {
+      if (group.type !== "group") return;
+      group.subs.forEach((sub) => {
+        const th = document.createElement("th");
+        th.className = "catalog-sub-th";
+        th.textContent = sub;
+        subRow.appendChild(th);
+      });
+    });
+    thead.appendChild(subRow);
+  }
   table.appendChild(thead);
 
   const tbody = document.createElement("tbody");
   (tabla.filas || []).forEach((fila) => {
     const tr = document.createElement("tr");
+    const checkTd = document.createElement("td");
+    checkTd.className = "catalog-check-cell";
+    checkTd.innerHTML = `<input type="checkbox" class="catalog-row-check" aria-label="${COMPRAS_IS_ENGLISH ? "Select model" : "Seleccionar modelo"}">`;
+    tr.appendChild(checkTd);
+
     fila.forEach((cell, cellIndex) => {
       const td = document.createElement("td");
       const value = cell == null ? "" : String(cell);
       td.setAttribute("data-label", columns[cellIndex] || "");
+      td.setAttribute("data-col-index", String(cellIndex));
       const rowLabel = String(fila[0] ?? "");
       const asDatasheet =
         isDatasheetColumn(columns[cellIndex]) ||
@@ -2963,9 +3072,9 @@ function buildProductTableSection(tabla, index) {
     if (canAddModels) {
       const actionTd = document.createElement("td");
       actionTd.className = "table-row-action";
-      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Quote" : "Cotizar");
+      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar");
       const model = String(fila[modelColIndex] == null ? "" : fila[modelColIndex]).trim();
-      if (model) actionTd.appendChild(buildAddModelButton(model));
+      if (model) actionTd.appendChild(buildQuoteControls(model));
       tr.appendChild(actionTd);
     }
     tbody.appendChild(tr);
@@ -2980,7 +3089,9 @@ function buildProductTableSection(tabla, index) {
     tableDiv.addEventListener("click", (event) => {
       const addBtn = event.target.closest(".table-add-model-btn");
       if (!addBtn) return;
-      addTableModelToCart(addBtn.dataset.model);
+      const row = addBtn.closest("tr");
+      const qtyInput = row && row.querySelector(".table-qty-input");
+      addTableModelToCart(addBtn.dataset.model, qtyInput ? qtyInput.value : 1);
     });
   }
 
