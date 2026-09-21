@@ -24,7 +24,7 @@ function getImageUrl(product) {
 }
 
 function normalizar(texto) {
-  return texto
+  return String(texto || "")
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -2705,6 +2705,7 @@ function buildQuoteControls(model) {
 }
 
 function detectPowerColumnPair(first, second) {
+  if (first == null || second == null) return null;
   const a = normalizar(first);
   const b = normalizar(second);
   if (!a || !b) return null;
@@ -2989,6 +2990,7 @@ function buildProductTableSection(tabla, index) {
       th.textContent = group.label;
     } else {
       if (hasGroups) th.rowSpan = 2;
+      if (isModelColumn(group.label)) th.classList.add("catalog-model-col");
       const present = catalogColumnPresentation(group.label);
       if (present.icon) {
         th.innerHTML =
@@ -3048,6 +3050,7 @@ function buildProductTableSection(tabla, index) {
       } else if (isBadgeColumn(columns[cellIndex])) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
       } else if (isModelColumn(columns[cellIndex])) {
+        td.classList.add("catalog-model-cell");
         td.innerHTML = `<span class="table-model-chip">${escapeHtml(value)}</span>`;
       } else if (cellIndex === 0 && (isCompare || columns.length <= 2)) {
         td.innerHTML = `<b>${escapeHtml(value)}</b>`;
@@ -3109,7 +3112,11 @@ function renderProductTables(selectedProduct) {
     tablasContainer.appendChild(buildRepuestosModule(repuestos));
   }
   (tablasArray || []).forEach((tabla, index) => {
-    tablasContainer.appendChild(buildProductTableSection(tabla, index));
+    try {
+      tablasContainer.appendChild(buildProductTableSection(tabla, index));
+    } catch (error) {
+      console.warn("No se pudo pintar una tabla del producto:", error);
+    }
   });
 }
 

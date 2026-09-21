@@ -4118,9 +4118,9 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 .compras-page-content .catalog-table-banner {
   width: 100%;
   border: 0;
-  background: #f7fbff !important;
+  background: #fff !important;
   color: #02307B !important;
-  padding: 18px 20px;
+  padding: 20px 22px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -4159,17 +4159,20 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 
 .compras-page-content .catalog-hz-badge {
   flex: 0 0 auto;
-  min-width: 64px;
-  height: 64px;
-  border-radius: 16px;
-  display: grid;
-  place-items: center;
-  background: linear-gradient(180deg, #02307B, #01245c);
+  width: 68px;
+  height: 68px;
+  min-width: 68px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #02307B;
   color: #fff;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 900;
   line-height: 1;
-  box-shadow: 0 10px 20px rgba(2, 48, 123, 0.22);
+  box-shadow: 0 10px 20px rgba(2, 48, 123, 0.2);
 }
 
 .compras-page-content .catalog-hz-badge small {
@@ -4194,9 +4197,11 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 }
 
 .compras-page-content .catalog-table-banner .table-title-text {
-  font-size: 18px;
+  margin-top: 2px;
+  font-size: 20px;
   font-weight: 800;
   color: #0b3b86 !important;
+  letter-spacing: -0.02em;
 }
 
 .compras-page-content .catalog-table-banner__aside {
@@ -4225,28 +4230,33 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   border: 0;
   box-shadow: none;
   background: transparent;
-  padding: 0 8px 12px;
+  padding: 0 16px 16px;
+  overflow-x: auto;
 }
 
 .compras-page-content .catalog-data-table {
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;
-  min-width: 980px;
-  overflow: hidden;
+  width: max-content;
+  min-width: 100%;
 }
 
 .compras-page-content .catalog-data-table thead th {
-  background: #02307B;
-  color: #fff;
+  background: #02307B !important;
+  color: #fff !important;
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: none;
-  padding: 12px 10px;
+  padding: 12px 12px;
   border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
   vertical-align: middle;
+  position: static !important;
+  top: auto !important;
+  z-index: auto !important;
+  white-space: normal;
 }
 
 .compras-page-content .catalog-data-table thead th:first-child {
@@ -4255,6 +4265,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 
 .compras-page-content .catalog-data-table thead th:last-child {
   border-top-right-radius: 16px;
+  border-right: 0;
 }
 
 .compras-page-content .catalog-data-table thead .catalog-group-th {
@@ -4262,7 +4273,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 }
 
 .compras-page-content .catalog-data-table thead .catalog-sub-th {
-  background: #0b3f96;
+  background: #0b3f96 !important;
   font-size: 11px;
   font-weight: 700;
 }
@@ -4282,6 +4293,19 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   text-align: center;
 }
 
+.compras-page-content .catalog-data-table tbody td:first-child,
+.compras-page-content .catalog-data-table.spec-data-table--compare tbody td:first-child {
+  min-width: 42px;
+  width: 42px;
+  font-weight: 400;
+  color: inherit;
+  box-shadow: none;
+}
+
+.compras-page-content .catalog-data-table tbody tr:hover td {
+  box-shadow: none;
+}
+
 .compras-page-content .catalog-data-table tbody tr:nth-child(even) td {
   background: #f8fbff;
 }
@@ -4292,8 +4316,87 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 
 .compras-page-content .catalog-check-col,
 .compras-page-content .catalog-check-cell {
-  width: 42px;
+  width: 44px;
+  min-width: 44px;
   text-align: center;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5;
+}
+
+.compras-page-content .catalog-data-table thead .catalog-check-col {
+  z-index: 8;
+}
+
+.compras-page-content .catalog-model-col,
+.compras-page-content .catalog-model-cell {
+  position: sticky !important;
+  left: 44px !important;
+  z-index: 5;
+  min-width: 140px;
+  text-align: left !important;
+  box-shadow: 10px 0 16px -12px rgba(2, 48, 123, 0.35);
+}
+
+.compras-page-content .catalog-data-table thead .catalog-model-col {
+  z-index: 8;
+}
+
+.compras-page-content .catalog-check-cell,
+.compras-page-content .catalog-model-cell,
+.compras-page-content .catalog-data-table td.table-row-action {
+  background: #fff;
+}
+
+.compras-page-content .catalog-data-table tbody tr:nth-child(even) .catalog-check-cell,
+.compras-page-content .catalog-data-table tbody tr:nth-child(even) .catalog-model-cell,
+.compras-page-content .catalog-data-table tbody tr:nth-child(even) .table-row-action {
+  background: #f8fbff;
+}
+
+.compras-page-content .catalog-data-table tbody tr:hover .catalog-check-cell,
+.compras-page-content .catalog-data-table tbody tr:hover .catalog-model-cell,
+.compras-page-content .catalog-data-table tbody tr:hover .table-row-action {
+  background: #eef5ff;
+}
+
+.compras-page-content .catalog-data-table .table-action-col,
+.compras-page-content .catalog-data-table td.table-row-action {
+  position: sticky !important;
+  right: 0 !important;
+  z-index: 6;
+  width: 230px;
+  min-width: 230px;
+  white-space: nowrap !important;
+  text-align: center !important;
+  box-shadow: -10px 0 16px -12px rgba(2, 48, 123, 0.35);
+}
+
+.compras-page-content .catalog-data-table thead .table-action-col {
+  z-index: 9;
+}
+
+.compras-page-content .table-quote-controls {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+}
+
+.compras-page-content .table-qty-input {
+  width: 58px;
+  height: 36px;
+  border: 1px solid #d7e3f3;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 700;
+  color: #02307B;
+  background: #fff;
+}
+
+.compras-page-content .catalog-data-table .table-add-model-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .compras-page-content .catalog-row-check {
@@ -4309,6 +4412,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   color: #0b3b86;
   font-weight: 800;
   padding: 0;
+  justify-content: flex-start;
 }
 
 .compras-page-content .table-quote-controls {
