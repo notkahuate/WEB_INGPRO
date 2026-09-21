@@ -880,7 +880,7 @@ function renderManualsSection(product) {
 
 // --- EVENTOS GLOBALES ---
 
-const COMPRAS_IS_ENGLISH = /pages_us|_us\.html|^\/product(\/|$)/i.test(
+const COMPRAS_IS_ENGLISH = /pages_us|_us\.html|compras_us|^\/product(\/|$)|^\/products(\/|$)/i.test(
   window.location.pathname
 );
 
@@ -2722,10 +2722,14 @@ function detectPowerColumnPair(first, second) {
   const a = normalizar(first);
   const b = normalizar(second);
   if (!a || !b) return null;
-  if (/esp/.test(a) && /kva/.test(a) && /esp/.test(b) && /kw/.test(b) && !/kva/.test(b)) {
+  const isEsp = /esp|standby|emergencia/.test(a);
+  const isPrp = /prp|prime|principal/.test(a);
+  const aKva = /kva/.test(a);
+  const bKw = /kw/.test(b) && !/kva/.test(b);
+  if (isEsp && aKva && /esp|standby|emergencia/.test(b) && bKw) {
     return { group: "ESP", subs: ["kVA", "kW"] };
   }
-  if (/prp/.test(a) && /kva/.test(a) && /prp/.test(b) && /kw/.test(b) && !/kva/.test(b)) {
+  if (isPrp && aKva && /prp|prime|principal/.test(b) && bKw) {
     return { group: "PRP", subs: ["kVA", "kW"] };
   }
   return null;
@@ -3085,7 +3089,13 @@ function buildProductTableSection(tabla, index) {
   table.appendChild(tbody);
 
   tableWrap.appendChild(table);
+  const hint = document.createElement("p");
+  hint.className = "catalog-table-hint";
+  hint.textContent = COMPRAS_IS_ENGLISH
+    ? "Scroll the table to see dimensions and other columns. Headers stay visible when you scroll down."
+    : "Desliza la tabla para ver dimensiones y el resto de columnas. Los encabezados se quedan fijos al bajar.";
   contentDiv.appendChild(tableWrap);
+  contentDiv.appendChild(hint);
   tableDiv.appendChild(contentDiv);
 
   if (canAddModels) {

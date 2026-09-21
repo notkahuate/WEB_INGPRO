@@ -4226,17 +4226,27 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   color: #02307B !important;
 }
 
-.compras-page-content .catalog-table-wrap {
+.compras-page-content .catalog-table-wrap,
+.compras-page-content .table-section .table-wrap {
   border: 0;
   box-shadow: none;
   background: #fff;
   padding: 0;
-  max-height: min(58vh, 520px);
+  max-height: min(58vh, 560px);
   overflow: auto;
   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
-.compras-page-content .catalog-data-table {
+.compras-page-content .catalog-table-hint {
+  margin: 0;
+  padding: 8px 16px 12px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.compras-page-content .catalog-data-table,
+.compras-page-content .table-section .spec-data-table {
   border-collapse: separate;
   border-spacing: 0;
   width: max-content;
@@ -4245,7 +4255,8 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   border-radius: 0;
 }
 
-.compras-page-content .catalog-data-table thead th {
+.compras-page-content .catalog-data-table thead th,
+.compras-page-content .table-section .spec-data-table thead th {
   background: #02307B !important;
   color: #fff !important;
   font-size: 11px;
@@ -4260,14 +4271,13 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   vertical-align: middle;
   position: sticky !important;
   top: 0 !important;
-  left: auto !important;
-  right: auto !important;
-  z-index: 5;
+  z-index: 4;
   white-space: nowrap;
   border-radius: 0 !important;
 }
 
-.compras-page-content .catalog-data-table thead th:last-child {
+.compras-page-content .catalog-data-table thead th:last-child,
+.compras-page-content .table-section .spec-data-table thead th:last-child {
   border-right: 0;
 }
 
@@ -4282,7 +4292,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   font-weight: 700;
   height: 30px;
   top: 32px !important;
-  z-index: 5;
+  z-index: 4;
 }
 
 .compras-page-content .catalog-th-icon {
@@ -4291,7 +4301,8 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   opacity: 0.9;
 }
 
-.compras-page-content .catalog-data-table tbody td {
+.compras-page-content .catalog-data-table tbody td,
+.compras-page-content .table-section .spec-data-table tbody td {
   background: #fff;
   border-bottom: 1px solid #eef3fa;
   padding: 14px 10px;
@@ -4306,19 +4317,17 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   width: 42px;
   font-weight: 400;
   color: inherit;
+}
+
+.compras-page-content .catalog-data-table tbody tr:hover td,
+.compras-page-content .table-section .spec-data-table tbody tr:hover td {
   box-shadow: none;
-}
-
-.compras-page-content .catalog-data-table tbody tr:hover td {
-  box-shadow: none;
-}
-
-.compras-page-content .catalog-data-table tbody tr:nth-child(even) td {
-  background: #f8fbff;
-}
-
-.compras-page-content .catalog-data-table tbody tr:hover td {
   background: #eef5ff;
+}
+
+.compras-page-content .catalog-data-table tbody tr:nth-child(even) td,
+.compras-page-content .table-section .spec-data-table tbody tr:nth-child(even) td {
+  background: #f8fbff;
 }
 
 .compras-page-content .catalog-check-col,
@@ -4326,54 +4335,37 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   width: 44px;
   min-width: 44px;
   text-align: center;
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 3;
 }
 
 .compras-page-content .catalog-model-col,
 .compras-page-content .catalog-model-cell {
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
+  position: sticky !important;
+  left: 44px !important;
+  z-index: 3;
   min-width: 148px;
   text-align: left !important;
 }
 
-.compras-page-content .catalog-data-table thead .catalog-check-col,
-.compras-page-content .catalog-data-table thead .catalog-model-col,
-.compras-page-content .catalog-data-table thead .table-action-col {
-  position: sticky !important;
-  top: 0 !important;
-  left: auto !important;
-  right: auto !important;
-  z-index: 6;
-}
-
 .compras-page-content .catalog-data-table .table-action-col,
 .compras-page-content .catalog-data-table td.table-row-action {
-  position: static !important;
-  left: auto !important;
-  right: auto !important;
+  position: sticky !important;
+  right: 0 !important;
+  z-index: 3;
   width: 176px;
   min-width: 176px;
   padding: 10px 12px !important;
   white-space: nowrap !important;
   text-align: center !important;
   vertical-align: middle;
-  box-shadow: none;
-}
-
-.compras-page-content .catalog-data-table thead .table-action-col {
-  position: sticky !important;
-  top: 0 !important;
 }
 
 .compras-page-content .catalog-check-cell,
 .compras-page-content .catalog-model-cell,
 .compras-page-content .catalog-data-table td.table-row-action {
   background: #fff !important;
-  box-shadow: none;
 }
 
 .compras-page-content .catalog-data-table tbody tr:nth-child(even) .catalog-check-cell,
@@ -4386,6 +4378,32 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 .compras-page-content .catalog-data-table tbody tr:hover .catalog-model-cell,
 .compras-page-content .catalog-data-table tbody tr:hover .table-row-action {
   background: #eef5ff !important;
+}
+
+.compras-page-content .catalog-model-cell {
+  box-shadow: 8px 0 12px -10px rgba(2, 48, 123, 0.35);
+}
+
+.compras-page-content .catalog-data-table td.table-row-action {
+  box-shadow: -8px 0 12px -10px rgba(2, 48, 123, 0.28), inset 1px 0 0 #e6eef8;
+}
+
+.compras-page-content .catalog-data-table thead .catalog-check-col,
+.compras-page-content .catalog-data-table thead .catalog-model-col,
+.compras-page-content .catalog-data-table thead .table-action-col {
+  top: 0 !important;
+  z-index: 7;
+  background: #02307B !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+}
+
+.compras-page-content .catalog-data-table thead .catalog-model-col {
+  box-shadow: 8px 0 12px -10px rgba(0, 0, 0, 0.28);
+}
+
+.compras-page-content .catalog-data-table thead .table-action-col {
+  box-shadow: -8px 0 12px -10px rgba(0, 0, 0, 0.28), inset 1px 0 0 rgba(255, 255, 255, 0.16);
 }
 
 .compras-page-content .table-quote-controls {
