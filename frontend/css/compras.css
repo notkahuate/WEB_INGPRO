@@ -4229,8 +4229,8 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 .compras-page-content .catalog-table-wrap {
   border: 0;
   box-shadow: none;
-  background: transparent;
-  padding: 0 16px 16px;
+  background: #fff;
+  padding: 0;
   max-height: min(58vh, 520px);
   overflow: auto;
   overscroll-behavior: contain;
@@ -4261,12 +4261,13 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   white-space: nowrap;
 }
 
-.compras-page-content .catalog-data-table thead th:first-child {
-  border-top-left-radius: 16px;
+.compras-page-content .catalog-data-table thead th:first-child,
+.compras-page-content .catalog-data-table thead th:last-child {
+  border-radius: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .compras-page-content .catalog-data-table thead th:last-child {
-  border-top-right-radius: 16px;
   border-right: 0;
 }
 
@@ -4349,19 +4350,19 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 .compras-page-content .catalog-check-cell,
 .compras-page-content .catalog-model-cell,
 .compras-page-content .catalog-data-table td.table-row-action {
-  background: #fff;
+  background: #fff !important;
 }
 
 .compras-page-content .catalog-data-table tbody tr:nth-child(even) .catalog-check-cell,
 .compras-page-content .catalog-data-table tbody tr:nth-child(even) .catalog-model-cell,
 .compras-page-content .catalog-data-table tbody tr:nth-child(even) .table-row-action {
-  background: #f8fbff;
+  background: #f8fbff !important;
 }
 
 .compras-page-content .catalog-data-table tbody tr:hover .catalog-check-cell,
 .compras-page-content .catalog-data-table tbody tr:hover .catalog-model-cell,
 .compras-page-content .catalog-data-table tbody tr:hover .table-row-action {
-  background: #eef5ff;
+  background: #eef5ff !important;
 }
 
 .compras-page-content .catalog-data-table .table-action-col,
@@ -4369,22 +4370,32 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   position: sticky !important;
   right: 0 !important;
   z-index: 6;
-  width: 168px;
-  min-width: 168px;
-  max-width: 168px;
-  padding-left: 10px !important;
-  padding-right: 10px !important;
+  width: 176px !important;
+  min-width: 176px !important;
+  max-width: 176px !important;
+  padding: 10px 12px !important;
   white-space: nowrap !important;
   text-align: center !important;
   vertical-align: middle;
-  box-shadow: -10px 0 16px -12px rgba(2, 48, 123, 0.35);
+  background-clip: padding-box;
+}
+
+.compras-page-content .catalog-data-table thead .table-action-col {
+  background: #02307B !important;
+  color: #fff !important;
+  border-radius: 0 !important;
+  box-shadow: inset 1px 0 0 rgba(255, 255, 255, 0.16);
+}
+
+.compras-page-content .catalog-data-table td.table-row-action {
+  box-shadow: inset 1px 0 0 #e6eef8;
 }
 
 .compras-page-content .catalog-data-table thead .catalog-check-col,
 .compras-page-content .catalog-data-table thead .catalog-model-col,
 .compras-page-content .catalog-data-table thead .table-action-col {
   top: 0;
-  z-index: 9;
+  z-index: 10;
 }
 
 .compras-page-content .table-quote-controls {
@@ -4433,28 +4444,10 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   justify-content: flex-start;
 }
 
-.compras-page-content .table-quote-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.compras-page-content .table-qty-input {
-  width: 58px;
-  height: 36px;
-  border: 1px solid #d7e3f3;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: 700;
-  color: #02307B;
-  background: #fff;
-}
-
-.compras-page-content .catalog-data-table .table-add-model-btn,
-.compras-page-content .table-add-model-btn {
+.compras-page-content .catalog-data-table .table-add-model-btn {
   background: linear-gradient(135deg, #ff7a18, #f05a00);
-  box-shadow: 0 8px 16px rgba(240, 90, 0, 0.24);
-  min-width: 110px;
+  box-shadow: 0 6px 12px rgba(240, 90, 0, 0.22);
+  min-width: 0;
   border-radius: 999px;
 }
 
@@ -4937,7 +4930,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   .compras-page-content .catalog-table-wrap {
     overflow: auto;
     max-height: min(62vh, 460px);
-    padding: 0 10px 12px;
+    padding: 0;
   }
 
   .compras-page-content .catalog-data-table,
