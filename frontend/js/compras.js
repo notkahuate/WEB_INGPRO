@@ -2978,13 +2978,12 @@ function buildProductTableSection(tabla, index) {
   const hasGroups = groups.some((group) => group.type === "group");
   const modelColIndex = findModelColumnIndex(columns);
   const canAddModels = modelColIndex >= 0;
+  const powerIndexes = new Set();
+  groups.forEach((group) => {
+    if (group.type === "group") group.indexes.forEach((index) => powerIndexes.add(index));
+  });
   const thead = document.createElement("thead");
   const topRow = document.createElement("tr");
-
-  const checkTh = document.createElement("th");
-  checkTh.className = "catalog-check-col";
-  if (hasGroups) checkTh.rowSpan = 2;
-  topRow.appendChild(checkTh);
 
   groups.forEach((group) => {
     const th = document.createElement("th");
@@ -3011,7 +3010,7 @@ function buildProductTableSection(tabla, index) {
     const actionTh = document.createElement("th");
     actionTh.className = "table-action-col";
     if (hasGroups) actionTh.rowSpan = 2;
-    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Add" : "Añadir";
+    actionTh.textContent = COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar";
     topRow.appendChild(actionTh);
   }
   thead.appendChild(topRow);
@@ -3034,11 +3033,6 @@ function buildProductTableSection(tabla, index) {
   const tbody = document.createElement("tbody");
   (tabla.filas || []).forEach((fila) => {
     const tr = document.createElement("tr");
-    const checkTd = document.createElement("td");
-    checkTd.className = "catalog-check-cell";
-    checkTd.innerHTML = `<input type="checkbox" class="catalog-row-check" aria-label="${COMPRAS_IS_ENGLISH ? "Select model" : "Seleccionar modelo"}">`;
-    tr.appendChild(checkTd);
-
     fila.forEach((cell, cellIndex) => {
       const td = document.createElement("td");
       const value = cell == null ? "" : String(cell);
@@ -3055,10 +3049,16 @@ function buildProductTableSection(tabla, index) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
       } else if (isModelColumn(columns[cellIndex])) {
         td.classList.add("catalog-model-cell");
-        td.innerHTML = `<span class="table-model-chip">${escapeHtml(value)}</span>`;
+        const selectLabel = COMPRAS_IS_ENGLISH ? "Select model" : "Seleccionar modelo";
+        td.innerHTML =
+          `<label class="catalog-compare-label">` +
+          `<input type="checkbox" class="catalog-row-check" aria-label="${selectLabel}">` +
+          `<span class="table-model-chip">${escapeHtml(value)}</span>` +
+          `</label>`;
       } else if (cellIndex === 0 && (isCompare || columns.length <= 2)) {
         td.innerHTML = `<b>${escapeHtml(value)}</b>`;
       } else {
+        if (powerIndexes.has(cellIndex)) td.classList.add("catalog-power-cell");
         td.textContent = value;
       }
       tr.appendChild(td);
@@ -3066,7 +3066,7 @@ function buildProductTableSection(tabla, index) {
     if (canAddModels) {
       const actionTd = document.createElement("td");
       actionTd.className = "table-row-action";
-      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Add" : "Añadir");
+      actionTd.setAttribute("data-label", COMPRAS_IS_ENGLISH ? "Qty / quote" : "Cantidad / cotizar");
       const model = String(fila[modelColIndex] == null ? "" : fila[modelColIndex]).trim();
       if (model) actionTd.appendChild(buildQuoteControls(model));
       tr.appendChild(actionTd);
@@ -3079,10 +3079,10 @@ function buildProductTableSection(tabla, index) {
   const hint = document.createElement("p");
   hint.className = "catalog-table-hint";
   hint.textContent = COMPRAS_IS_ENGLISH
-    ? "Scroll the table to see dimensions and other columns. Headers stay visible when you scroll down."
-    : "Desliza la tabla para ver dimensiones y el resto de columnas. Los encabezados se quedan fijos al bajar.";
-  contentDiv.appendChild(tableWrap);
+    ? "Scroll the table to see dimensions and configuration."
+    : "Desliza la tabla para consultar dimensiones y configuración.";
   contentDiv.appendChild(hint);
+  contentDiv.appendChild(tableWrap);
   tableDiv.appendChild(contentDiv);
 
   if (canAddModels) {
