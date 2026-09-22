@@ -4489,18 +4489,15 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   transition: filter 0.2s ease;
 }
 
-.compras-page-content .table-title.collapsible:hover {
-  filter: brightness(1.05);
-  background: linear-gradient(180deg, #004BE4 0%, #02307B 100%);
-  color: #fff !important;
-}
-
+.compras-page-content #tablasContainer .table-title.collapsible,
+.compras-page-content #tablasContainer .table-title.collapsible:hover,
 .compras-page-content .catalog-table-banner.table-title.collapsible,
 .compras-page-content .catalog-table-banner.table-title.collapsible:hover {
   background: transparent !important;
   color: #02307B !important;
   filter: none;
   border-bottom: 0;
+  box-shadow: none;
 }
 
 .compras-page-content .table-title.expanded {
@@ -4734,6 +4731,138 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   font-size: 13px;
   font-weight: 800;
   letter-spacing: 0.01em;
+}
+
+/* Filtros del catálogo de generadores (50/60 Hz, motor, kVA) */
+.compras-page-content .catalog-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0 0 18px;
+  padding: 16px 16px 14px;
+  border: 1px solid #dce4f0;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.compras-page-content .catalog-freq-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.compras-page-content .catalog-freq-tab {
+  border: 1px solid #d5e0f4;
+  background: #eaf0fd;
+  color: #02307B;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.compras-page-content .catalog-freq-tab.is-active {
+  background: #02307B;
+  border-color: #02307B;
+  color: #fff;
+}
+
+.compras-page-content .catalog-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(220px, 1.4fr) repeat(2, minmax(110px, 0.7fr));
+  gap: 12px;
+  align-items: end;
+}
+
+.compras-page-content .catalog-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.compras-page-content .catalog-filter-field span,
+.compras-page-content .catalog-filter-power legend {
+  color: #5b7190;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.compras-page-content .catalog-filter-field select,
+.compras-page-content .catalog-filter-field input[type="number"] {
+  width: 100%;
+  min-height: 42px;
+  border: 1px solid #c9d7eb;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+  color: #13263f;
+}
+
+.compras-page-content .catalog-filter-power {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.compras-page-content .catalog-filter-power label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #02307B;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.compras-page-content .catalog-filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.compras-page-content .catalog-compare-btn,
+.compras-page-content .catalog-filters-clear {
+  border: 1px solid #004be429;
+  background: #fff;
+  color: #02307B;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.compras-page-content .catalog-compare-btn.is-active {
+  background: #02307B;
+  color: #fff;
+  border-color: #02307B;
+}
+
+.compras-page-content .catalog-filter-count {
+  margin-left: auto;
+  color: #5b7190;
+  font-size: 13px;
+}
+
+.compras-page-content .catalog-filter-count strong {
+  color: #02307B;
+}
+
+@media (max-width: 900px) {
+  .compras-page-content .catalog-filter-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .compras-page-content .catalog-filter-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Filtros dinámicos en tablas técnicas */
