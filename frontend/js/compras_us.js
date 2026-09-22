@@ -1781,13 +1781,26 @@ function isGeneratorCatalogTable(tabla) {
   return hasModel && hasPower;
 }
 
+function isTruthyFlag(value) {
+  if (value === true || value === 1) return true;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    return normalized === "true" || normalized === "1" || normalized === "si" || normalized === "sí" || normalized === "yes" || normalized === "on";
+  }
+  return false;
+}
+
 function tablaWantsCatalogFilters(tabla) {
   if (!tabla) return false;
-  if (tabla.filtros === true || tabla.filtrable === true) return true;
-  if (tabla.filters === true || tabla.filterable === true) return true;
-  if (tabla.filtros && typeof tabla.filtros === "object") {
+  if (isTruthyFlag(tabla.filtros) || isTruthyFlag(tabla.filtrable)) return true;
+  if (isTruthyFlag(tabla.filters) || isTruthyFlag(tabla.filterable)) return true;
+  if (tabla.filtros && typeof tabla.filtros === "object" && !Array.isArray(tabla.filtros)) {
     if (tabla.filtros.activo === false || tabla.filtros.active === false) return false;
-    return tabla.filtros.activo === true || tabla.filtros.active === true || Object.keys(tabla.filtros).length > 0;
+    return (
+      isTruthyFlag(tabla.filtros.activo) ||
+      isTruthyFlag(tabla.filtros.active) ||
+      Object.keys(tabla.filtros).length > 0
+    );
   }
   return isGeneratorCatalogTable(tabla);
 }
@@ -2235,45 +2248,129 @@ function buildCatalogFilterBoard(sections) {
   });
   const motors = uniqueCatalogValues(sections, "engineCol");
   const hzKeys = Object.keys(counts).filter((key) => key !== "all").sort((a, b) => Number(a) - Number(b));
+  const modelsWord = COMPRAS_IS_ENGLISH ? "models" : "modelos";
   const allLabel = COMPRAS_IS_ENGLISH ? `All · ${counts.all}` : `Todas · ${counts.all}`;
   const tabs = [
-    `<button type="button" class="catalog-freq-tab is-active" data-hz="all">${escapeHtml(allLabel)}</button>`,
+    `<button type="button" class="catalog-freq-tab is-active" data-hz="all" aria-pressed="true">${escapeHtml(allLabel)}</button>`,
     ...hzKeys.map(
       (hz) =>
-        `<button type="button" class="catalog-freq-tab" data-hz="${escapeHtml(hz)}">${escapeHtml(hz)} Hz · ${counts[hz]}</button>`
+        `<button type="button" class="catalog-freq-tab" data-hz="${escapeHtml(hz)}" aria-pressed="false">${escapeHtml(hz)} Hz · ${counts[hz]} ${modelsWord}</button>`
     ),
   ];
   const motorOptions =
     `<option value="">${COMPRAS_IS_ENGLISH ? "All engines" : "Todos los motores"}</option>` +
     motors.map((motor) => `<option value="${escapeHtml(motor)}">${escapeHtml(motor)}</option>`).join("");
   board.innerHTML =
+    `<div class="catalog-filters-head">` +
+    `<div class="catalog-filters-heading">` +
+    `<span class="catalog-filters-kicker">${COMPRAS_IS_ENGLISH ? "Compare and quote" : "Comparar y cotizar"}</span>` +
+    `<h3 class="catalog-filters-title">${COMPRAS_IS_ENGLISH ? "Filters" : "Filtros"}</h3>` +
+    `</div>` +
+    `<button type="button" class="catalog-export-btn">` +
+    `<i class="fa-solid fa-download" aria-hidden="true"></i>` +
+    `${COMPRAS_IS_ENGLISH ? "Export results" : "Exportar resultados"}` +
+    `</button>` +
+    `</div>` +
+    `<div class="catalog-filters-body">` +
     `<div class="catalog-freq-tabs">${tabs.join("")}</div>` +
     `<div class="catalog-filter-grid">` +
+    `<label class="catalog-filter-field catalog-filter-search-field"><span>${COMPRAS_IS_ENGLISH ? "Search" : "Buscar"}</span>` +
+    `<input type="search" class="catalog-filter-search" placeholder="${COMPRAS_IS_ENGLISH ? "Model, engine, origin" : "Modelo, motor, origen"}"></label>` +
     `<label class="catalog-filter-field"><span>${COMPRAS_IS_ENGLISH ? "Engine" : "Motor"}</span>` +
     `<select class="catalog-filter-motor">${motorOptions}</select></label>` +
-    `<fieldset class="catalog-filter-field catalog-filter-power">` +
-    `<legend>${COMPRAS_IS_ENGLISH ? "Power" : "Potencia"}</legend>` +
-    `<label><input type="radio" name="catalog-power" value="esp" checked> ESP / Standby · kVA</label>` +
-    `<label><input type="radio" name="catalog-power" value="prp"> PRP / Prime · kVA</label>` +
-    `</fieldset>` +
+    `<label class="catalog-filter-field"><span>${COMPRAS_IS_ENGLISH ? "Power" : "Potencia"}</span>` +
+    `<select class="catalog-filter-power">` +
+    `<option value="esp" selected>ESP / Standby · kVA</option>` +
+    `<option value="prp">PRP / Prime · kVA</option>` +
+    `</select></label>` +
     `<label class="catalog-filter-field"><span>${COMPRAS_IS_ENGLISH ? "From · kVA" : "Desde · kVA"}</span>` +
-    `<input type="number" class="catalog-filter-min" min="0" step="1"></label>` +
+    `<input type="number" class="catalog-filter-min" min="0" step="1" placeholder="${COMPRAS_IS_ENGLISH ? "No minimum" : "Sin mínimo"}"></label>` +
     `<label class="catalog-filter-field"><span>${COMPRAS_IS_ENGLISH ? "To · kVA" : "Hasta · kVA"}</span>` +
-    `<input type="number" class="catalog-filter-max" min="0" step="1"></label>` +
+    `<input type="number" class="catalog-filter-max" min="0" step="1" placeholder="${COMPRAS_IS_ENGLISH ? "No maximum" : "Sin máximo"}"></label>` +
     `</div>` +
     `<div class="catalog-filter-actions">` +
-    `<button type="button" class="catalog-compare-btn">${COMPRAS_IS_ENGLISH ? "Compare selected (0)" : "Comparar seleccionados (0)"}</button>` +
+    `<button type="button" class="catalog-compare-btn" disabled>${COMPRAS_IS_ENGLISH ? "Compare selected (0)" : "Comparar seleccionados (0)"}</button>` +
     `<button type="button" class="catalog-filters-clear">${COMPRAS_IS_ENGLISH ? "Clear filters" : "Limpiar filtros"}</button>` +
     `<span class="catalog-filter-count"><strong>${counts.all}</strong> ${COMPRAS_IS_ENGLISH ? "results" : "resultados"}</span>` +
+    `</div>` +
+    `<p class="catalog-table-hint">${COMPRAS_IS_ENGLISH ? "Swipe the table to review dimensions and configuration. Codes and values stay as in the original datasheet." : "Desliza la tabla para consultar dimensiones y configuración. Los códigos y valores se mantienen como en la ficha original."}</p>` +
     `</div>`;
   return board;
+}
+
+function csvEscapeCell(value) {
+  const text = String(value == null ? "" : value).replace(/"/g, '""').trim();
+  return /[",\n\r]/.test(text) ? `"${text}"` : text;
+}
+
+function collectCatalogExportHeaders(table) {
+  const headers = [];
+  const top = table.querySelectorAll("thead tr:first-child th");
+  const subs = table.querySelectorAll("thead tr:nth-child(2) th");
+  let subIndex = 0;
+  top.forEach((th) => {
+    if (th.classList.contains("table-action-col")) return;
+    const label = String(th.textContent || "").replace(/\s+/g, " ").trim();
+    const span = Number(th.colSpan || 1);
+    if (span > 1) {
+      for (let i = 0; i < span; i += 1) {
+        const subLabel = String(subs[subIndex]?.textContent || "").replace(/\s+/g, " ").trim();
+        subIndex += 1;
+        headers.push([label, subLabel].filter(Boolean).join(" · "));
+      }
+      return;
+    }
+    headers.push(label);
+  });
+  return headers;
+}
+
+function exportCatalogFilterResults(sections) {
+  const includeHz = sections.some((section) => section.dataset.hz);
+  const lines = [];
+  let headers = null;
+  let count = 0;
+  sections.forEach((section) => {
+    if (section.hidden) return;
+    const table = section.querySelector("table");
+    if (!table) return;
+    if (!headers) {
+      headers = collectCatalogExportHeaders(table);
+      if (includeHz) headers.push("Hz");
+      lines.push(headers.map(csvEscapeCell).join(","));
+    }
+    table.querySelectorAll("tbody tr").forEach((tr) => {
+      if (tr.hidden) return;
+      const values = Array.from(tr.children)
+        .filter((td) => !td.classList.contains("table-row-action") && !td.classList.contains("table-action-col"))
+        .map((td) => {
+          const chip = td.querySelector(".table-model-chip");
+          return String((chip ? chip.textContent : td.textContent) || "").replace(/\s+/g, " ").trim();
+        });
+      if (includeHz) values.push(section.dataset.hz ? `${section.dataset.hz} Hz` : "");
+      lines.push(values.map(csvEscapeCell).join(","));
+      count += 1;
+    });
+  });
+  if (!headers) return;
+  const blob = new Blob([`\uFEFF${lines.join("\r\n")}`], { type: "text/csv;charset=utf-8;" });
+  const link = document.createElement("a");
+  const stamp = new Date().toISOString().slice(0, 10);
+  link.href = URL.createObjectURL(blob);
+  link.download = COMPRAS_IS_ENGLISH ? `catalog-results-${stamp}.csv` : `resultados-catalogo-${stamp}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(link.href);
+  return count;
 }
 
 function applyCatalogFilters(board, sections) {
   const hzBtn = board.querySelector(".catalog-freq-tab.is-active");
   const hz = hzBtn ? hzBtn.dataset.hz : "all";
+  const search = normalizeFilterText(board.querySelector(".catalog-filter-search")?.value);
   const motor = String(board.querySelector(".catalog-filter-motor")?.value || "").trim();
-  const powerMode = board.querySelector('input[name="catalog-power"]:checked')?.value || "esp";
+  const powerMode = board.querySelector(".catalog-filter-power")?.value || "esp";
   const min = parseFloat(board.querySelector(".catalog-filter-min")?.value);
   const max = parseFloat(board.querySelector(".catalog-filter-max")?.value);
   const compareOnly = board.classList.contains("is-compare-mode");
@@ -2297,6 +2394,7 @@ function applyCatalogFilters(board, sections) {
     const powerIdx = Number(powerMode === "prp" ? section.dataset.prpCol : section.dataset.espCol);
     section.querySelectorAll("tbody tr").forEach((row) => {
       let show = true;
+      if (search && !normalizeFilterText(row.textContent).includes(search)) show = false;
       if (motor && !Number.isNaN(engineIdx) && engineIdx >= 0) {
         const cell = row.querySelector(`td[data-col-index="${engineIdx}"]`);
         if (String(cell?.textContent || "").trim() !== motor) show = false;
@@ -2324,6 +2422,7 @@ function applyCatalogFilters(board, sections) {
       ? `Compare selected (${selected})`
       : `Comparar seleccionados (${selected})`;
     compareBtn.classList.toggle("is-active", compareOnly);
+    compareBtn.disabled = selected === 0 && !compareOnly;
   }
 }
 
@@ -2331,8 +2430,12 @@ function bindCatalogFilters(board, sections) {
   const run = () => applyCatalogFilters(board, sections);
   board.querySelectorAll(".catalog-freq-tab").forEach((btn) => {
     btn.addEventListener("click", () => {
-      board.querySelectorAll(".catalog-freq-tab").forEach((tab) => tab.classList.remove("is-active"));
+      board.querySelectorAll(".catalog-freq-tab").forEach((tab) => {
+        tab.classList.remove("is-active");
+        tab.setAttribute("aria-pressed", "false");
+      });
       btn.classList.add("is-active");
+      btn.setAttribute("aria-pressed", "true");
       run();
     });
   });
@@ -2341,14 +2444,20 @@ function bindCatalogFilters(board, sections) {
   });
   board.querySelector(".catalog-filters-clear")?.addEventListener("click", () => {
     board.classList.remove("is-compare-mode");
-    board.querySelectorAll(".catalog-freq-tab").forEach((tab) => tab.classList.toggle("is-active", tab.dataset.hz === "all"));
+    board.querySelectorAll(".catalog-freq-tab").forEach((tab) => {
+      const active = tab.dataset.hz === "all";
+      tab.classList.toggle("is-active", active);
+      tab.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    const search = board.querySelector(".catalog-filter-search");
+    if (search) search.value = "";
     const motor = board.querySelector(".catalog-filter-motor");
     if (motor) motor.selectedIndex = 0;
+    const power = board.querySelector(".catalog-filter-power");
+    if (power) power.value = "esp";
     board.querySelectorAll(".catalog-filter-min, .catalog-filter-max").forEach((input) => {
       input.value = "";
     });
-    const esp = board.querySelector('input[name="catalog-power"][value="esp"]');
-    if (esp) esp.checked = true;
     sections.forEach((section) => {
       section.querySelectorAll(".catalog-row-check").forEach((box) => {
         box.checked = false;
@@ -2359,6 +2468,9 @@ function bindCatalogFilters(board, sections) {
   board.querySelector(".catalog-compare-btn")?.addEventListener("click", () => {
     board.classList.toggle("is-compare-mode");
     run();
+  });
+  board.querySelector(".catalog-export-btn")?.addEventListener("click", () => {
+    exportCatalogFilterResults(sections);
   });
   sections.forEach((section) => {
     section.addEventListener("change", (event) => {
@@ -2405,10 +2517,10 @@ function parseProductTablasPayload(raw) {
   tablas = tablas.map(localizeProductTabla);
 
   const parentWantsFilters =
-    parsed.filtros === true ||
-    parsed.filtrable === true ||
-    parsed.filters === true ||
-    parsed.filterable === true;
+    isTruthyFlag(parsed.filtros) ||
+    isTruthyFlag(parsed.filtrable) ||
+    isTruthyFlag(parsed.filters) ||
+    isTruthyFlag(parsed.filterable);
 
   if (parentWantsFilters) {
     tablas = tablas.map((tabla) =>
@@ -3126,6 +3238,9 @@ function buildProductTableSection(tabla, index) {
   tableDiv.dataset.catalog = isCatalog ? "1" : "0";
   tableDiv.dataset.engineCol = String(
     findCatalogColumnIndex(columns, /engine model|modelo (del )?motor|^motor$|engine/)
+  );
+  tableDiv.dataset.originCol = String(
+    findCatalogColumnIndex(columns, /country of origin|pais de origen|origen|origin/)
   );
   tableDiv.dataset.espCol = String(findCatalogColumnIndex(columns, /esp.*kva|standby.*kva/));
   tableDiv.dataset.prpCol = String(findCatalogColumnIndex(columns, /prp.*kva|prime.*kva/));
