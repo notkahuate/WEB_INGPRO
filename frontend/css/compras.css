@@ -3819,19 +3819,19 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 
 .compras-page-content .package-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
-  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 10px;
 }
 
 .compras-page-content .package-card {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
-  min-height: 0;
-  padding: 8px 10px;
+  gap: 12px;
+  min-height: 88px;
+  padding: 16px 14px;
   border: 1px solid rgba(0, 75, 228, 0.14);
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   box-shadow: 0 2px 8px rgba(2, 48, 123, 0.05);
 }
@@ -3843,15 +3843,15 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 }
 
 .compras-page-content .package-card-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
   background: #edf3ff;
   color: var(--ingpro-blue-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  font-size: 16px;
   flex-shrink: 0;
 }
 
@@ -3864,13 +3864,13 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 3px;
+  gap: 6px;
   min-width: 0;
 }
 
 .compras-page-content .package-card-title {
-  font-size: 13px;
-  line-height: 1.3;
+  font-size: 14px;
+  line-height: 1.35;
   color: #02307B;
   font-weight: 800;
 }
@@ -3878,7 +3878,7 @@ body.compras-sticky-tabs-visible .compras-page-content .tabs-static-wrapper {
 .compras-page-content .package-card-tag {
   margin-top: 0;
   display: inline-flex;
-  padding: 2px 7px;
+  padding: 3px 8px;
   border-radius: 6px;
   background: #eef5ff;
   color: #4a6284;
