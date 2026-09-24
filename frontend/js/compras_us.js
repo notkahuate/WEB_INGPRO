@@ -786,8 +786,10 @@ function renderInboxContent(product) {
       return (
         `<article class="package-card${isProduct ? " package-card--product" : ""}">` +
         `<span class="package-card-icon" aria-hidden="true"><i class="fa-solid ${icon}"></i></span>` +
+        `<span class="package-card-copy">` +
         `<strong class="package-card-title">${escapeHtml(item)}</strong>` +
         `<span class="package-card-tag">${isProduct ? productTag : includedTag}</span>` +
+        `</span>` +
         `</article>`
       );
     })
@@ -880,9 +882,7 @@ function renderManualsSection(product) {
 
 // --- EVENTOS GLOBALES ---
 
-const COMPRAS_IS_ENGLISH = /pages_us|_us\.html|compras_us|^\/product(\/|$)|^\/products(\/|$)/i.test(
-  window.location.pathname
-);
+const COMPRAS_IS_ENGLISH = true;
 
 const COMPRAS_COUNTRY_FLAGS = {
   'united states': { flag: '🇺🇸', es: 'Estados Unidos', en: 'United States' },
@@ -2787,7 +2787,7 @@ function buildRepuestosModule(repuestos) {
 
 /** Tamaño máximo del ejemplo TEHMA (4 cols × 6 filas) para el selector visual. */
 const MODEL_SELECTOR_MAX_COLUMNS = 4;
-const MODEL_SELECTOR_MAX_ROWS = 8;
+const MODEL_SELECTOR_MAX_ROWS = 6;
 
 function isComparisonSpecTable(tabla) {
   const columns = Array.isArray(tabla?.columnas) ? tabla.columnas : [];
@@ -3091,10 +3091,13 @@ function parseCatalogTableMeta(tabla) {
     product = null;
   }
   const brand = String(product?.cf_marca || product?.brand || "").trim();
-  const eyebrow = COMPRAS_IS_ENGLISH
-    ? `${diesel ? "Diesel Generator" : "Generator"}${isThree ? " | Three Phase" : ""}`
-    : `${diesel ? "Generador diésel" : "Generador"}${isThree ? " | Trifásico" : ""}`;
-  return { title, hz, isThree, brand, rows, eyebrow };
+  const isGenerator = !!(hz || diesel || /generador|generator|genset/i.test(title));
+  const eyebrow = isGenerator
+    ? COMPRAS_IS_ENGLISH
+      ? `${diesel ? "Diesel Generator" : "Generator"}${isThree ? " | Three Phase" : ""}`
+      : `${diesel ? "Generador diésel" : "Generador"}${isThree ? " | Trifásico" : ""}`
+    : "";
+  return { title, hz, isThree, brand: isGenerator ? brand : "", rows, eyebrow };
 }
 
 function hideProductDescriptionTab() {
@@ -3373,12 +3376,16 @@ function buildProductTableSection(tabla, index) {
         td.innerHTML = `<span class="table-value-badge">${escapeHtml(value)}</span>`;
       } else if (isModelColumn(columns[cellIndex])) {
         td.classList.add("catalog-model-cell");
-        const selectLabel = COMPRAS_IS_ENGLISH ? "Select model" : "Seleccionar modelo";
-        td.innerHTML =
-          `<label class="catalog-compare-label">` +
-          `<input type="checkbox" class="catalog-row-check" aria-label="${selectLabel}">` +
-          `<span class="table-model-chip">${escapeHtml(value)}</span>` +
-          `</label>`;
+        if (isCatalog) {
+          const selectLabel = COMPRAS_IS_ENGLISH ? "Select model" : "Seleccionar modelo";
+          td.innerHTML =
+            `<label class="catalog-compare-label">` +
+            `<input type="checkbox" class="catalog-row-check" aria-label="${selectLabel}">` +
+            `<span class="table-model-chip">${escapeHtml(value)}</span>` +
+            `</label>`;
+        } else {
+          td.innerHTML = `<span class="table-model-chip">${escapeHtml(value)}</span>`;
+        }
       } else if (cellIndex === 0 && (isCompare || columns.length <= 2)) {
         td.innerHTML = `<b>${escapeHtml(value)}</b>`;
       } else {
