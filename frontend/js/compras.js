@@ -166,7 +166,8 @@ function legacyBuildProductSlug(product) {
 }
 
 function buildProductUrl(product) {
-  return `/producto/${buildProductSlug(product)}`;
+  const prefix = COMPRAS_IS_ENGLISH ? "product" : "producto";
+  return `/${prefix}/${buildProductSlug(product)}`;
 }
 
 /** Evita cortar códigos tipo D-48 a mitad del guion. */
@@ -871,7 +872,12 @@ function renderManualsSection(product) {
     .join("");
 }
 
-const COMPRAS_IS_ENGLISH = false;
+const COMPRAS_IS_ENGLISH =
+  typeof document !== "undefined" &&
+  (document.documentElement.lang === "en" ||
+    /pages_us|_us\.html|compras_us|^\/product(\/|$)|^\/products(\/|$)/i.test(
+      String(window.location.pathname || "")
+    ));
 
 const COMPRAS_COUNTRY_FLAGS = {
   'united states': { flag: '🇺🇸', es: 'Estados Unidos', en: 'United States' },
@@ -1488,7 +1494,9 @@ function setupAddToCart() {
 
       const producto = { nombre: productName };
       localStorage.setItem("productoSeleccionado", JSON.stringify(producto));
-      window.location.href = "/pages/opciones.html";
+      window.location.href = COMPRAS_IS_ENGLISH
+        ? "/pages_us/Opciones_us.html"
+        : "/pages/opciones.html";
     });
   }
 }
@@ -1517,7 +1525,9 @@ function setupSearch() {
     const texto = searchInput.value.trim();
 
     if (texto.length > 0) {
-      window.location.href = `/pages/productos.html?q=${encodeURIComponent(texto)}`;
+      window.location.href = COMPRAS_IS_ENGLISH
+        ? `/pages_us/productos_us.html?q=${encodeURIComponent(texto)}`
+        : `/pages/productos.html?q=${encodeURIComponent(texto)}`;
     }
   }
 });
@@ -1653,7 +1663,9 @@ function setupBrands() {
     brandsList.addEventListener("click", (e) => {
       if (e.target.classList.contains("brand-link")) {
         const brand = e.target.dataset.brand;
-        window.location.href = `/pages/brands.html?brand=${encodeURIComponent(brand)}`;
+        window.location.href = COMPRAS_IS_ENGLISH
+          ? `/pages_us/brands_us.html?brand=${encodeURIComponent(brand)}`
+          : `/pages/brands.html?brand=${encodeURIComponent(brand)}`;
       }
     });
   }
@@ -2510,9 +2522,12 @@ function parseProductTablasPayload(raw) {
     isTruthyFlag(parsed.filterable);
 
   if (parentWantsFilters) {
-    tablas = tablas.map((tabla) =>
-      tabla && typeof tabla === "object" ? { ...tabla, filtros: tabla.filtros ?? true } : tabla
-    );
+    tablas = tablas.map((tabla) => {
+      if (!tabla || typeof tabla !== "object") return tabla;
+      if (tabla.filtros != null) return tabla;
+      if (shouldUseModelSelector(tabla)) return tabla;
+      return { ...tabla, filtros: true };
+    });
   }
 
   let repuestos = null;
@@ -2796,11 +2811,11 @@ function shouldUseModelSelector(tabla) {
   if (!isComparisonSpecTable(tabla)) return false;
   const columns = Array.isArray(tabla?.columnas) ? tabla.columnas : [];
   const rows = Array.isArray(tabla?.filas) ? tabla.filas : [];
-  // Solo tablas compactas (mismo tamaño del ejemplo o menores): ≤4 cols y ≤6 filas
+  // Tablas compactas (ejemplo TEHMA): 3–4 columnas y hasta 6 filas
   if (columns.length < 3 || columns.length > MODEL_SELECTOR_MAX_COLUMNS) return false;
   if (!rows.length || rows.length > MODEL_SELECTOR_MAX_ROWS) return false;
-  // Si pide filtros explícitos, respetar tabla clásica
-  if (tablaWantsCatalogFilters(tabla)) return false;
+  // Los catálogos grandes de generadores siguen con la tabla actual
+  if (isGeneratorCatalogTable(tabla)) return false;
   return true;
 }
 
@@ -4275,20 +4290,26 @@ function initProductBreadcrumb() {
   if (itemCode && !codigo) codigo = itemCode;
 
   try {
-    const isShortProductUrl = /^\/producto\/[^/]+\/?$/.test(window.location.pathname || "");
+    const isShortProductUrl = /^\/product(?:o)?\/[^/]+\/?$/.test(window.location.pathname || "");
     if (isShortProductUrl && window.location.search) {
       history.replaceState(null, "", window.location.pathname);
     }
   } catch (_) {}
 
-  const productosUrl = '/pages/productos.html';
+  const productosUrl = COMPRAS_IS_ENGLISH ? "/pages_us/productos_us.html" : "/pages/productos.html";
   const esc = (s) => String(s == null ? '' : s)
     .replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
   function buildCrumbs(productName) {
     const crumbs = [
-      { label: 'Inicio', href: '/pages/index.html' },
-      { label: 'Productos', href: `${productosUrl}?section=inicio` },
+      {
+        label: COMPRAS_IS_ENGLISH ? "Home" : "Inicio",
+        href: COMPRAS_IS_ENGLISH ? "/pages_us/Home_us.html" : "/pages/index.html",
+      },
+      {
+        label: COMPRAS_IS_ENGLISH ? "Products" : "Productos",
+        href: `${productosUrl}?section=inicio`,
+      },
     ];
 
     if (categoria) {

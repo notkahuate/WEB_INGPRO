@@ -23,14 +23,6 @@ function getImageUrl(product) {
   return '/img/no-image.png';
 }
 
-/** UI-only English name from cf_item. Keep product.name (Spanish) for cart/quotes. */
-function getProductDisplayName(product) {
-  if (!product) return '';
-  const en = String(product.cf_item || product.nameEn || '').trim();
-  if (en) return en;
-  return String(product.name || '').trim() || 'Product';
-}
-
 function normalizar(texto) {
   return String(texto || "")
     .toLowerCase()
@@ -87,7 +79,7 @@ function extractModelFromName(name) {
 }
 
 function extractProductModel(product) {
-  if (!product) return "model";
+  if (!product) return "modelo";
   const explicit = product.modelo || product.model || product.cf_modelo;
   if (explicit && String(explicit).trim()) return String(explicit).trim();
 
@@ -99,7 +91,7 @@ function extractProductModel(product) {
   ).trim();
   if (code && !isOpaqueProductToken(code)) return code;
 
-  return String(product.item_id || product.id || "model");
+  return String(product.item_id || product.id || "modelo");
 }
 
 function stripCategoryTaxonomyCode(label) {
@@ -117,9 +109,9 @@ function slugifyCategorySegment(label) {
 
 function buildProductPathSegments(product) {
   const brand = slugify(
-    product?.brand || product?.cf_marca || product?.marca || "brand"
-  ) || "brand";
-  const model = slugify(extractProductModel(product)) || "model";
+    product?.brand || product?.cf_marca || product?.marca || "marca"
+  ) || "marca";
+  const model = slugify(extractProductModel(product)) || "modelo";
   const category = slugifyCategorySegment(
     product?.categoria ||
       product?.cf_categoria ||
@@ -174,9 +166,11 @@ function legacyBuildProductSlug(product) {
 }
 
 function buildProductUrl(product) {
-  return `/product/${buildProductSlug(product)}`;
+  const prefix = COMPRAS_IS_ENGLISH ? "product" : "producto";
+  return `/${prefix}/${buildProductSlug(product)}`;
 }
 
+/** Evita cortar códigos tipo D-48 a mitad del guion. */
 function wrapTitleKeepTogetherHtml(text) {
   const raw = String(text || "");
   const re = /[A-Za-z0-9]+(?:-[A-Za-z0-9]+)+/g;
@@ -192,9 +186,9 @@ function wrapTitleKeepTogetherHtml(text) {
   return html;
 }
 
-/** Hero title like TEHMA mockup: accent on model/reference */
+/** Título: texto negro; marca y referencia/modelo en azul INGPRO. */
 function formatHeroProductTitleHtml(name, product) {
-  const raw = String(name || "").trim() || "Product";
+  const raw = String(name || "").trim() || "Producto sin nombre";
   const tokens = [
     product?.brand,
     product?.cf_marca,
@@ -328,8 +322,7 @@ function applyProductTitleScale(nameElement, displayName) {
 function renderProductHeroChrome(product, displayName) {
   const nameElement = document.getElementById("product-name");
   if (nameElement) {
-    const titleText =
-      displayName || getProductDisplayName(product) || product?.name;
+    const titleText = displayName || product?.name;
     nameElement.innerHTML = formatHeroProductTitleHtml(titleText, product);
     applyProductTitleScale(nameElement, titleText);
   }
@@ -405,7 +398,7 @@ function resolveLocalizedText(value, preferEnglish) {
   return "";
 }
 
-/** Avoid duplicating the section H2 (Description / Descripción). */
+/** Evita duplicar el H2 de la sección (Description / Descripción). */
 function setDescriptionSubtitle(titleEl, title) {
   if (!titleEl) return;
   const clean = String(title || "").trim();
@@ -566,29 +559,28 @@ function getSpecKpiIcon(label, index = 0) {
 
 function resolveProductIndustryKpi(product) {
   if (!product || typeof resolveIndustry !== "function") return null;
-  // EN page: industry comes from cf_category
   const raw =
-    product.cf_category ||
+    product.cf_categoria ||
     product.industryName ||
     product.industry ||
     "";
   const industry = resolveIndustry(raw);
-  if (!industry && !String(raw || "").trim()) return null;
+  if (!industry) return null;
 
-  const value = industry
-    ? (typeof getIndustryLabel === "function"
-        ? getIndustryLabel(industry, true)
-        : industry.en)
-    : String(raw).trim();
-
-  if (!value) return null;
+  const value =
+    typeof getIndustryLabel === "function"
+      ? getIndustryLabel(industry, COMPRAS_IS_ENGLISH)
+      : COMPRAS_IS_ENGLISH
+        ? industry.en
+        : industry.es;
 
   return {
-    label: "Industry",
+    label: COMPRAS_IS_ENGLISH ? "Industry" : "Industria",
     value,
-    icon: industry && typeof getIndustryIconClass === "function"
-      ? getIndustryIconClass(industry)
-      : "fa-industry",
+    icon:
+      typeof getIndustryIconClass === "function"
+        ? getIndustryIconClass(industry)
+        : "fa-industry",
   };
 }
 
@@ -880,9 +872,12 @@ function renderManualsSection(product) {
     .join("");
 }
 
-// --- EVENTOS GLOBALES ---
-
-const COMPRAS_IS_ENGLISH = true;
+const COMPRAS_IS_ENGLISH =
+  typeof document !== "undefined" &&
+  (document.documentElement.lang === "en" ||
+    /pages_us|_us\.html|compras_us|^\/product(\/|$)|^\/products(\/|$)/i.test(
+      String(window.location.pathname || "")
+    ));
 
 const COMPRAS_COUNTRY_FLAGS = {
   'united states': { flag: '🇺🇸', es: 'Estados Unidos', en: 'United States' },
@@ -1200,7 +1195,7 @@ function updateCartCount() {
 
   const cartItems = JSON.parse(sessionStorage.getItem("cartItems")) || [];
   const totalItems = cartItems.reduce((acc, p) => acc + p.quantity, 0);
-  cartCountEl.textContent = `Cart (${totalItems})`;
+  cartCountEl.textContent = `Carrito (${totalItems})`;
 }
 
 async function fetchFullProduct(productOrId) {
@@ -1216,7 +1211,7 @@ async function fetchFullProduct(productOrId) {
     const full = await res.json();
     if (full && (full.item_id || full.name)) return full;
   } catch (err) {
-    console.warn("Could not hydrate full product:", err.message || err);
+    console.warn("No se pudo hidratar producto completo:", err.message || err);
   }
   return productOrId && typeof productOrId === "object" ? productOrId : null;
 }
@@ -1246,7 +1241,7 @@ async function cargarProductoPorSlug() {
 
   if (!slug) {
     const shortMatch = window.location.pathname.match(
-      /^\/product\/(.+?)\/?$/
+      /^\/producto\/(.+?)\/?$/
     );
     if (shortMatch) slug = decodeURIComponent(shortMatch[1]);
   }
@@ -1327,10 +1322,10 @@ function loadSelectedProduct() {
     return;
   }
 
-  // Name (TEHMA-style hero title)
+  // Nombre (hero estilo TEHMA)
   renderProductHeroChrome(
     selectedProduct,
-    getProductDisplayName(selectedProduct)
+    selectedProduct.name || "Producto sin nombre"
   );
   renderProductLead(selectedProduct);
 
@@ -1357,7 +1352,7 @@ function loadSelectedProduct() {
   if (brandContainer) brandContainer.innerHTML = "";
   if (brandContainer && selectedProduct.proveedor) {
     const supplierSpan = document.createElement("span");
-    supplierSpan.innerHTML = `Supplier: <strong>${selectedProduct.proveedor}</strong>`;
+    supplierSpan.innerHTML = `Proveedor: <strong>${selectedProduct.proveedor}</strong>`;
     brandContainer.appendChild(supplierSpan);
   }
 
@@ -1391,7 +1386,7 @@ function loadSelectedProduct() {
 
   if (mainImage) {
     mainImage.src = images[0] || getImageUrl(selectedProduct) || "/img/no-image.png";
-    mainImage.alt = getProductDisplayName(selectedProduct);
+    mainImage.alt = selectedProduct.name || "Producto";
   }
 
   if (thumbnailsContainer) {
@@ -1431,7 +1426,7 @@ function loadRelatedProducts() {
 
   async function loadProducts() {
     try {
-      const response = await fetch("/api/products");
+      const response = await fetch("https://ingprosuppliers.com/api/products");
       if (!response.ok) throw new Error("Error al obtener productos del servidor");
 
       const products = await response.json();
@@ -1454,14 +1449,13 @@ function loadRelatedProducts() {
 
       maxItems.forEach(prod => {
         const imageUrl = getImageUrl(prod);
-        const displayName = getProductDisplayName(prod);
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>
             <div class="series-product-cell">
-              <img src="${imageUrl}" alt="${displayName}" class="series-product-image">
-              <a class="series-product-title" href="#" data-product='${JSON.stringify(prod).replace(/'/g, "&#39;")}'>
-                ${displayName}
+              <img src="${imageUrl}" alt="${prod.name}" class="series-product-image">
+              <a class="series-product-title" href="#" data-product='${JSON.stringify(prod)}'>
+                ${prod.name}
               </a>
             </div>
           </td>
@@ -1492,19 +1486,17 @@ function setupDatasheetLinks() {
 
 function setupAddToCart() {
   const addToCartBtn = document.querySelector(".add-to-cart-btn");
+  const productName = document.querySelector(".product-title")?.textContent.trim();
 
   if (addToCartBtn) {
     addToCartBtn.addEventListener("click", (event) => {
       event.preventDefault();
-      // Enviar siempre el nombre en español (campo name), no el de pantalla (cf_item)
-      const selectedProduct = JSON.parse(localStorage.getItem("selectedProduct") || "null");
-      const nombreEs =
-        (selectedProduct && selectedProduct.name) ||
-        document.querySelector(".product-title")?.textContent.trim() ||
-        "";
-      const producto = { nombre: nombreEs };
+
+      const producto = { nombre: productName };
       localStorage.setItem("productoSeleccionado", JSON.stringify(producto));
-      window.location.href = "/pages_us/Opciones_us.html";
+      window.location.href = COMPRAS_IS_ENGLISH
+        ? "/pages_us/Opciones_us.html"
+        : "/pages/opciones.html";
     });
   }
 }
@@ -1528,15 +1520,17 @@ function setupSearch() {
 
   loadProducts();
 
-  searchInput.addEventListener("keydown", (e) => {
+ searchInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const texto = searchInput.value.trim();
 
     if (texto.length > 0) {
-      window.location.href = `/pages_us/productos_us.html?q=${encodeURIComponent(texto)}`;
+      window.location.href = COMPRAS_IS_ENGLISH
+        ? `/pages_us/productos_us.html?q=${encodeURIComponent(texto)}`
+        : `/pages/productos.html?q=${encodeURIComponent(texto)}`;
     }
   }
-  });
+});
 
   searchInput.addEventListener("input", () => {
     const texto = searchInput.value.toLowerCase().trim();
@@ -1552,13 +1546,11 @@ function setupSearch() {
 
     const filtrados = allProducts.filter(p => {
       const name = normalizar(p.name || "");
-      const nameEn = normalizar(p.cf_item || p.nameEn || "");
       const marca = normalizar(p.cf_marca || "");
       const sku = normalizar(p.sku || "");
 
       return palabras.every(palabra =>
         name.includes(palabra) ||
-        nameEn.includes(palabra) ||
         marca.includes(palabra) ||
         sku.includes(palabra)
       );
@@ -1572,16 +1564,15 @@ function setupSearch() {
 
     filtrados.slice(0, 8).forEach(p => {
       const imagenPrincipal = getImageUrl(p);
-      const displayName = getProductDisplayName(p);
 
       const div = document.createElement("div");
       div.classList.add("result-item");
 
       div.innerHTML = `
-        <img src="${imagenPrincipal}" alt="${displayName || ""}">
+        <img src="${imagenPrincipal}" alt="${p.name || ""}">
         <div class="result-info">
-          <strong>${displayName || "Product"}</strong>
-          <span>${p.cf_marca || p.brand || "Unknown brand"}</span>
+          <strong>${p.name || "Producto"}</strong>
+          <span>${p.cf_marca || p.brand || "Sin marca"}</span>
         </div>
       `;
 
@@ -1672,7 +1663,9 @@ function setupBrands() {
     brandsList.addEventListener("click", (e) => {
       if (e.target.classList.contains("brand-link")) {
         const brand = e.target.dataset.brand;
-        window.location.href = `/pages_us/brands_us.html?brand=${encodeURIComponent(brand)}`;
+        window.location.href = COMPRAS_IS_ENGLISH
+          ? `/pages_us/brands_us.html?brand=${encodeURIComponent(brand)}`
+          : `/pages/brands.html?brand=${encodeURIComponent(brand)}`;
       }
     });
   }
@@ -1748,7 +1741,6 @@ function setupTabsPlaceholder() {
   tabsSection.parentNode.insertBefore(placeholder, tabsSection);
 }
 
-// --- INICIALIZACIÓN ---
 function toggleTable(element) {
   const icon = element.querySelector('.toggle-icon');
   const content = element.nextElementSibling;
@@ -1826,7 +1818,9 @@ function parseNumericCell(value) {
 function isPureNumericValue(value) {
   const cleaned = String(value == null ? "" : value).replace(/,/g, "").trim();
   if (!cleaned) return false;
+  // Solo número puro
   if (/^-?\d+(?:\.\d+)?$/.test(cleaned)) return true;
+  // Número + unidad opcional (sin letras mezcladas tipo códigos YBBP-3551-2)
   return /^-?\d+(?:\.\d+)?\s*(?:kw|kv|v|a|rpm|kg|%|w|hz|nm|mm|cm|m|hp|vac|vdc|n·m|n\.m)?$/i.test(
     cleaned
   );
@@ -1892,6 +1886,7 @@ function analyzeTableColumns(tabla) {
       return { columnName, columnIndex, type: "text", unique };
     }
 
+    // Códigos / modelos: nunca rango numérico
     if (looksLikeCodeOrTextColumn(columnName)) {
       if (unique.length >= 2 && unique.length <= 40) {
         return { columnName, columnIndex, type: "select", unique };
@@ -1899,18 +1894,22 @@ function analyzeTableColumns(tabla) {
       return { columnName, columnIndex, type: "text", unique };
     }
 
+    // Categorías cortas (Voltage, Poles…): dropdown
     if (looksLikeCategoryColumn(columnName) && unique.length >= 2 && unique.length <= 40) {
       return { columnName, columnIndex, type: "select", unique };
     }
 
+    // Solo rango si son números reales (no "YBBP-3551-2")
     if (mostlyPureNumeric && unique.length >= 4) {
       return { columnName, columnIndex, type: "range", unique, numericValues };
     }
 
+    // Pocos valores distintos → dropdown (texto o categorías)
     if (unique.length >= 2 && unique.length <= 30) {
       return { columnName, columnIndex, type: "select", unique };
     }
 
+    // Muchos valores de texto → campo de letras
     if (!mostlyPureNumeric && unique.length > 30) {
       return { columnName, columnIndex, type: "text", unique };
     }
@@ -2061,12 +2060,12 @@ function buildTableFilterToolbar(tabla, columnAnalysis) {
   return toolbar;
 }
 
-function isBadgeColumn(columnName) {
-  return /voltage|tensi[oó]n|voltaje|poles|polos/i.test(String(columnName || ""));
-}
-
 function isModelColumn(columnName) {
   return /\bmodel(o|os)?s?\b/i.test(String(columnName || "").trim());
+}
+
+function isBadgeColumn(columnName) {
+  return /voltage|tensi[oó]n|voltaje|poles|polos/i.test(String(columnName || ""));
 }
 
 function isDatasheetColumn(columnName) {
@@ -2523,9 +2522,12 @@ function parseProductTablasPayload(raw) {
     isTruthyFlag(parsed.filterable);
 
   if (parentWantsFilters) {
-    tablas = tablas.map((tabla) =>
-      tabla && typeof tabla === "object" ? { ...tabla, filtros: tabla.filtros ?? true } : tabla
-    );
+    tablas = tablas.map((tabla) => {
+      if (!tabla || typeof tabla !== "object") return tabla;
+      if (tabla.filtros != null) return tabla;
+      if (shouldUseModelSelector(tabla)) return tabla;
+      return { ...tabla, filtros: true };
+    });
   }
 
   let repuestos = null;
@@ -2809,11 +2811,11 @@ function shouldUseModelSelector(tabla) {
   if (!isComparisonSpecTable(tabla)) return false;
   const columns = Array.isArray(tabla?.columnas) ? tabla.columnas : [];
   const rows = Array.isArray(tabla?.filas) ? tabla.filas : [];
-  // Solo tablas compactas (mismo tamaño del ejemplo o menores): ≤4 cols y ≤6 filas
+  // Tablas compactas (ejemplo TEHMA): 3–4 columnas y hasta 6 filas
   if (columns.length < 3 || columns.length > MODEL_SELECTOR_MAX_COLUMNS) return false;
   if (!rows.length || rows.length > MODEL_SELECTOR_MAX_ROWS) return false;
-  // Si pide filtros explícitos, respetar tabla clásica
-  if (tablaWantsCatalogFilters(tabla)) return false;
+  // Los catálogos grandes de generadores siguen con la tabla actual
+  if (isGeneratorCatalogTable(tabla)) return false;
   return true;
 }
 
@@ -3702,7 +3704,7 @@ function renderMarkdownBasic(text) {
     const mdImage = block.match(/^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/);
     if (mdImage) {
       flushSpecs();
-      const alt = escapeHtml(mdImage[1] || 'Image');
+      const alt = escapeHtml(mdImage[1] || 'Imagen');
       const src = escapeHtml(mdImage[2]);
       html.push(
         `<figure class="cms-inline-image"><img src="${src}" alt="${alt}" loading="lazy"></figure>`
@@ -3779,6 +3781,54 @@ function renderMarkdownBasic(text) {
   return html.join('');
 }
 
+function renderCmsSeccionesCard(seccion, index) {
+  const hasImages = Array.isArray(seccion.imagenes) && seccion.imagenes.length > 0;
+  const title = parseCmsTitle(seccion.titulo);
+  const imagesHtml = hasImages
+    ? `<div class="cms-seccion-gallery${seccion.imagenes.length === 1 ? ' cms-seccion-gallery--single' : ''}">` +
+      seccion.imagenes
+        .map(
+          (img) =>
+            `<figure class="cms-seccion-image">` +
+            `<img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt || title.heading)}" loading="lazy">` +
+            `</figure>`
+        )
+        .join('') +
+      `</div>`
+    : '';
+
+  const isHtml = looksLikeCmsHtml(seccion.informacion);
+  const infoHtml = seccion.informacion
+    ? `<div class="cms-seccion-body content-text${isHtml ? ' cms-seccion-body--html' : ''}">${renderCmsSectionBody(seccion.informacion)}</div>`
+    : '';
+
+  const layoutClass = hasImages
+    ? 'cms-seccion-layout cms-seccion-layout--media'
+    : 'cms-seccion-layout';
+  const altClass = index % 2 === 1 ? ' cms-seccion-card--alt' : '';
+  const htmlClass = isHtml ? ' cms-seccion-card--html' : '';
+
+  return (
+    `<article class="cms-seccion-card${altClass}${htmlClass}">` +
+    `<header class="cms-seccion-header">` +
+    (title.number
+      ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`
+      : '') +
+    `<div class="cms-seccion-heading">` +
+    `<h3 class="cms-seccion-title">${escapeHtml(title.heading)}</h3>` +
+    (title.subtitle
+      ? `<p class="cms-seccion-subtitle">${escapeHtml(title.subtitle)}</p>`
+      : '') +
+    `</div>` +
+    `</header>` +
+    `<div class="${layoutClass}">` +
+    imagesHtml +
+    infoHtml +
+    `</div>` +
+    `</article>`
+  );
+}
+
 function normalizeStrapiSecciones(payload) {
   if (!payload) return [];
 
@@ -3802,12 +3852,10 @@ function normalizeStrapiSecciones(payload) {
         })
         .filter((img) => img.url);
 
-      const tituloEn = String(attrs.titulo_en || "").trim();
-      const infoEn = String(attrs.informacion_en || "").trim();
       return {
         id: entry?.id || attrs.id,
-        titulo: tituloEn || attrs.titulo || "",
-        informacion: infoEn || attrs.informacion || "",
+        titulo: attrs.titulo || '',
+        informacion: attrs.informacion || '',
         orden: Number(attrs.orden) || 0,
         imagenes,
       };
@@ -3869,54 +3917,6 @@ function toggleCmsSeccionesTabVisibility(hasSections) {
   updateActiveProductTabOnScroll();
 }
 
-function renderCmsSeccionesCard(seccion, index) {
-  const hasImages = Array.isArray(seccion.imagenes) && seccion.imagenes.length > 0;
-  const title = parseCmsTitle(seccion.titulo);
-  const imagesHtml = hasImages
-    ? `<div class="cms-seccion-gallery${seccion.imagenes.length === 1 ? ' cms-seccion-gallery--single' : ''}">` +
-      seccion.imagenes
-        .map(
-          (img) =>
-            `<figure class="cms-seccion-image">` +
-            `<img src="${escapeHtml(img.url)}" alt="${escapeHtml(img.alt || title.heading)}" loading="lazy">` +
-            `</figure>`
-        )
-        .join('') +
-      `</div>`
-    : '';
-
-  const isHtml = looksLikeCmsHtml(seccion.informacion);
-  const infoHtml = seccion.informacion
-    ? `<div class="cms-seccion-body content-text${isHtml ? ' cms-seccion-body--html' : ''}">${renderCmsSectionBody(seccion.informacion)}</div>`
-    : '';
-
-  const layoutClass = hasImages
-    ? 'cms-seccion-layout cms-seccion-layout--media'
-    : 'cms-seccion-layout';
-  const altClass = index % 2 === 1 ? ' cms-seccion-card--alt' : '';
-  const htmlClass = isHtml ? ' cms-seccion-card--html' : '';
-
-  return (
-    `<article class="cms-seccion-card${altClass}${htmlClass}">` +
-    `<header class="cms-seccion-header">` +
-    (title.number
-      ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`
-      : '') +
-    `<div class="cms-seccion-heading">` +
-    `<h3 class="cms-seccion-title">${escapeHtml(title.heading)}</h3>` +
-    (title.subtitle
-      ? `<p class="cms-seccion-subtitle">${escapeHtml(title.subtitle)}</p>`
-      : '') +
-    `</div>` +
-    `</header>` +
-    `<div class="${layoutClass}">` +
-    imagesHtml +
-    infoHtml +
-    `</div>` +
-    `</article>`
-  );
-}
-
 function renderCmsSecciones(secciones) {
   const container = document.getElementById('cmsSeccionesContainer');
   if (!container) return;
@@ -3949,6 +3949,7 @@ async function loadProductSecciones() {
   }
 }
 
+// --- INICIALIZACIÓN ---
 function applyProductPageChrome() {
   initProductBreadcrumb();
   window.siteLayout?.setActiveNav?.('productos');
@@ -3957,7 +3958,7 @@ function applyProductPageChrome() {
 document.addEventListener("DOMContentLoaded", async () => {
   await cargarProductoPorSlug();
 
-  // If product came from lean catalog (localStorage), fetch full detail by ID
+  // Si vino de catálogo lean (localStorage), pedir ficha completa por ID
   try {
     const cached = JSON.parse(localStorage.getItem("selectedProduct") || "null");
     if (cached && productNeedsHydration(cached)) {
@@ -3982,16 +3983,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 window.addEventListener('load', applyProductPageChrome);
 
-
 /* =========================================================
-   Product breadcrumb (Category › Subcategory › Item)
-   If the DB sends the item as the category (e.g. "Other... - M337"),
-   the code is looked up in Categorias.js and the real hierarchy is
-   rebuilt. Requires Categorias.js to be loaded BEFORE compras_us.js.
+   Breadcrumb del producto (Categoría › Subcategoría › Ítem)
+   Si la BD trae el item como categoría (ej: "Otros... - M337"),
+   se busca ese código en Categorias.js y se reconstruye la jerarquía real.
    ========================================================= */
 function _bcExtractCode(value) {
   const raw = String(value || '').toUpperCase().trim();
-  // G205a, G206, Z204hh, and trailing-hyphen codes like G205a-
+  // G205a, G206, Z204hh, y códigos con guión final tipo G205a-
   const match = raw.match(/\b([A-Z]\d{3,4}[A-Z]{0,3})-?\b/);
   return match ? match[1] : '';
 }
@@ -4012,13 +4011,14 @@ function _bcNormalize(value) {
 
 function _bcIsGeneric(value) {
   const text = _bcNormalize(value);
-  return !text || ['general', 'sin categoria', 'sin subcategoria', 'no category', 'no subcategory', 'null', 'undefined', 'n a', 'na'].includes(text);
+  return !text || ['general', 'sin categoria', 'sin subcategoria', 'null', 'undefined', 'n a', 'na'].includes(text);
 }
 
 function _bcGetCategoriasArray() {
   try {
     if (typeof categorias !== 'undefined' && Array.isArray(categorias)) return categorias;
   } catch (_) {}
+
   if (window.categorias && Array.isArray(window.categorias)) return window.categorias;
   return [];
 }
@@ -4043,12 +4043,13 @@ function lookupCategoriaByCodigo(codigoOTexto) {
         ? subcategoriaObj.subsubcategorias
         : [];
 
+      // Taxonomía v2: Categoría > Subcategoría > Sub-subcategoría > Familia/Producto
       if (subsubs.length) {
         for (const ss of subsubs) {
           const subsubTitulo = _bcCleanText(ss && (ss.subtitulo || ss.name));
           const ssCode = _bcExtractCode(ss && ss.code);
 
-          // Direct match on sub-subcategory (e.g. G206 Crimping tools with empty families)
+          // Match directo de sub-subcategoría (ej. G206 Crimping tools sin familias)
           if (
             (wantedCode && ssCode && ssCode === wantedCode) ||
             (!wantedCode && wantedText && _bcNormalize(subsubTitulo) === wantedText)
@@ -4081,6 +4082,8 @@ function lookupCategoriaByCodigo(codigoOTexto) {
             if ((wantedCode && itemCode === wantedCode) || (!wantedCode && wantedText && (itemNorm === wantedText || nameNorm === wantedText))) {
               const famPath = _bcCleanText(fam.path) || '';
               const pathParts = famPath ? famPath.split(/\s*>\s*/).map(_bcCleanText).filter(Boolean) : [];
+              // Si el path termina en la familia, el "item" del breadcrumb es esa hoja;
+              // si el path solo llega a la sub-sub (3 niveles), no duplicar el nombre.
               const leafItem = pathParts.length >= 4 ? (itemName || itemLabel) : (pathParts.length === 3 ? '' : (itemName || itemLabel));
               return {
                 categoria: categoriaTitulo,
@@ -4096,6 +4099,7 @@ function lookupCategoriaByCodigo(codigoOTexto) {
         continue;
       }
 
+      // Fallback legacy: items planos bajo la subcategoría
       const items = Array.isArray(subcategoriaObj && subcategoriaObj.items)
         ? subcategoriaObj.items
         : [];
@@ -4107,14 +4111,30 @@ function lookupCategoriaByCodigo(codigoOTexto) {
         const itemName = item.replace(/\s*-\s*[A-Z]\d{3,4}[A-Za-z]{0,3}-?\s*$/i, '').trim();
 
         if (wantedCode && itemCode === wantedCode) {
-          return { categoria: categoriaTitulo, subcategoria: subcategoriaTitulo, subsubcategoria: '', item: itemName || item, codigo: itemCode, path: '' };
+          return {
+            categoria: categoriaTitulo,
+            subcategoria: subcategoriaTitulo,
+            subsubcategoria: '',
+            item: itemName || item,
+            codigo: itemCode,
+            path: '',
+          };
         }
+
         if (!wantedCode && wantedText && itemText === wantedText) {
-          return { categoria: categoriaTitulo, subcategoria: subcategoriaTitulo, subsubcategoria: '', item: itemName || item, codigo: itemCode, path: '' };
+          return {
+            categoria: categoriaTitulo,
+            subcategoria: subcategoriaTitulo,
+            subsubcategoria: '',
+            item: itemName || item,
+            codigo: itemCode,
+            path: '',
+          };
         }
       }
     }
   }
+
   return null;
 }
 
@@ -4127,8 +4147,11 @@ function _bcFormatItemLabel(item, codigo) {
 }
 
 function _bcGetSelectedProduct() {
-  try { return JSON.parse(localStorage.getItem('selectedProduct') || 'null'); }
-  catch (_) { return null; }
+  try {
+    return JSON.parse(localStorage.getItem('selectedProduct') || 'null');
+  } catch (_) {
+    return null;
+  }
 }
 
 function _bcAddCandidate(candidates, value) {
@@ -4138,7 +4161,8 @@ function _bcAddCandidate(candidates, value) {
 
 function _bcResolveHierarchyFromProduct(params, selectedProduct) {
   const candidates = [];
-  // Prefer fields that carry taxonomy codes; cf_item is the EN product name
+
+  // Priorizar campos con código de taxonomía; cf_item es nombre EN del producto (no categoría)
   _bcAddCandidate(candidates, params.get('codigo'));
   _bcAddCandidate(candidates, params.get('categoria'));
   _bcAddCandidate(candidates, params.get('item'));
@@ -4160,12 +4184,14 @@ function _bcResolveHierarchyFromProduct(params, selectedProduct) {
       selectedProduct.subcategoria,
       selectedProduct.subcategory,
       selectedProduct.item,
+      // cf_item / cf_categoria / cf_category al final: no son la taxonomía técnica
       selectedProduct.cf_item,
       selectedProduct.cf_categoria,
       selectedProduct.cf_category,
     ].forEach(value => _bcAddCandidate(candidates, value));
   }
 
+  // Primero intentar candidatos que traen código (G206, G205a, ...)
   for (const candidate of candidates) {
     if (!_bcExtractCode(candidate)) continue;
     const hierarchy = lookupCategoriaByCodigo(candidate);
@@ -4176,6 +4202,7 @@ function _bcResolveHierarchyFromProduct(params, selectedProduct) {
     const hierarchy = lookupCategoriaByCodigo(candidate);
     if (hierarchy) return hierarchy;
   }
+
   return null;
 }
 
@@ -4184,12 +4211,14 @@ function initProductBreadcrumb() {
   if (!ol) return;
 
   function slugToTitle(s) {
-    return String(s || '').replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return String(s || '')
+      .replace(/-/g, ' ')
+      .replace(/\b\w/g, l => l.toUpperCase());
   }
 
   function hydrateParamsFromPath() {
     const path = window.location.pathname || "";
-    const shortMatch = path.match(/^\/product\/([^/]+)\/?$/);
+    const shortMatch = path.match(/^\/producto\/([^/]+)\/?$/);
     if (shortMatch) {
       const qp = new URLSearchParams(window.location.search);
       if (!qp.get("slug")) {
@@ -4199,7 +4228,7 @@ function initProductBreadcrumb() {
     }
 
     const legacyMatch = path.match(
-      /^\/product\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)\/?$/
+      /^\/producto\/([^/]+)\/([^/]+)\/([^/]+)\/([^/]+)\/?$/
     );
     if (!legacyMatch) return new URLSearchParams(window.location.search);
 
@@ -4215,11 +4244,11 @@ function initProductBreadcrumb() {
   const params = hydrateParamsFromPath();
   const selectedProduct = _bcGetSelectedProduct();
 
-  let categoria    = _bcCleanText(params.get('categoria'));
+  let categoria = _bcCleanText(params.get('categoria'));
   let subcategoria = _bcCleanText(params.get('subcategoria'));
   let subsubcategoria = _bcCleanText(params.get('subsubcategoria'));
-  let item         = _bcCleanText(params.get('item'));
-  let codigo       = _bcExtractCode(params.get('codigo'));
+  let item = _bcCleanText(params.get('item'));
+  let codigo = _bcExtractCode(params.get('codigo'));
 
   const resolved = _bcResolveHierarchyFromProduct(params, selectedProduct);
   if (resolved) {
@@ -4228,16 +4257,17 @@ function initProductBreadcrumb() {
     subsubcategoria = resolved.subsubcategoria || '';
     item = resolved.item;
     codigo = resolved.codigo;
+    // Preferir path oficial de la taxonomía v2
     if (resolved.path) {
       const parts = resolved.path.split(/\s*>\s*/).map(_bcCleanText).filter(Boolean);
       if (parts[0]) categoria = parts[0];
       if (parts[1]) subcategoria = parts[1];
       if (parts[2]) subsubcategoria = parts[2];
       if (parts[3]) item = parts[3];
-      else if (parts.length <= 3) item = ''; // leaf is sub-sub (e.g. G206); product name follows
+      else if (parts.length <= 3) item = ''; // hoja = sub-sub (ej. G206); el producto va después
     }
   } else if (selectedProduct) {
-    // cf_category / cf_categoria son industria, NO categoría técnica
+    // cf_categoria / cf_category son industria, NO categoría técnica
     if (_bcIsGeneric(categoria)) {
       categoria = _bcCleanText(
         selectedProduct.categoria ||
@@ -4247,83 +4277,78 @@ function initProductBreadcrumb() {
       );
     }
     if (_bcIsGeneric(subcategoria)) subcategoria = _bcCleanText(selectedProduct.cf_subcategoria || selectedProduct.subcategoria || selectedProduct.subcategory);
-    if (_bcIsGeneric(item))         item         = _bcCleanText(selectedProduct.cf_item || selectedProduct.item);
+    if (_bcIsGeneric(item)) item = _bcCleanText(selectedProduct.cf_item || selectedProduct.item);
     if (!codigo) codigo = _bcExtractCode(selectedProduct.codigo_categoria || selectedProduct.categoria_codigo || selectedProduct.category_code || selectedProduct.cf_codigo_categoria || selectedProduct.cf_codigo || selectedProduct.codigo || selectedProduct.code);
   }
 
-  if (_bcIsGeneric(categoria))    categoria = '';
+  if (_bcIsGeneric(categoria)) categoria = '';
   if (_bcIsGeneric(subcategoria)) subcategoria = '';
   if (_bcIsGeneric(subsubcategoria)) subsubcategoria = '';
-  if (_bcIsGeneric(item))         item = '';
+  if (_bcIsGeneric(item)) item = '';
 
   const itemCode = _bcExtractCode(item);
   if (itemCode && !codigo) codigo = itemCode;
 
   try {
-    const isShortProductUrl = /^\/product\/[^/]+\/?$/.test(window.location.pathname || "");
+    const isShortProductUrl = /^\/product(?:o)?\/[^/]+\/?$/.test(window.location.pathname || "");
     if (isShortProductUrl && window.location.search) {
       history.replaceState(null, "", window.location.pathname);
     }
   } catch (_) {}
 
-  const productosUrl = '/pages_us/productos_us.html';
+  const productosUrl = COMPRAS_IS_ENGLISH ? "/pages_us/productos_us.html" : "/pages/productos.html";
   const esc = (s) => String(s == null ? '' : s)
-    .replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-
-  const industryRaw = selectedProduct
-    ? (selectedProduct.cf_category || selectedProduct.industryName || '')
-    : '';
-  const industryMatch =
-    typeof resolveIndustry === 'function' ? resolveIndustry(industryRaw) : null;
-  const industryLabel = industryMatch
-    ? (typeof getIndustryLabel === 'function'
-        ? getIndustryLabel(industryMatch, true)
-        : industryMatch.en)
-    : _bcCleanText(industryRaw);
+    .replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
 
   function buildCrumbs(productName) {
     const crumbs = [
-      { label: 'Home', href: '/pages_us/Home_us.html' },
-      { label: 'Products', href: `${productosUrl}?section=inicio` },
+      {
+        label: COMPRAS_IS_ENGLISH ? "Home" : "Inicio",
+        href: COMPRAS_IS_ENGLISH ? "/pages_us/Home_us.html" : "/pages/index.html",
+      },
+      {
+        label: COMPRAS_IS_ENGLISH ? "Products" : "Productos",
+        href: `${productosUrl}?section=inicio`,
+      },
     ];
-    if (industryLabel && industryMatch) {
-      crumbs.push({
-        label: industryLabel,
-        href: `${productosUrl}?industry=${encodeURIComponent(industryMatch.id)}`,
-      });
-    }
+
     if (categoria) {
       crumbs.push({
         label: categoria,
         href: `${productosUrl}?categoria=${encodeURIComponent(categoria)}`,
       });
     }
+
     if (subcategoria) {
       crumbs.push({
         label: subcategoria,
         href: `${productosUrl}?subcategoria=${encodeURIComponent(subcategoria)}`
-              + (categoria ? `&categoria=${encodeURIComponent(categoria)}` : ''),
+          + (categoria ? `&categoria=${encodeURIComponent(categoria)}` : ''),
       });
     }
+
     if (subsubcategoria) {
       crumbs.push({
         label: subsubcategoria,
         href: `${productosUrl}?subsubcategoria=${encodeURIComponent(subsubcategoria)}`
-              + (subcategoria ? `&subcategoria=${encodeURIComponent(subcategoria)}` : '')
-              + (categoria ? `&categoria=${encodeURIComponent(categoria)}` : ''),
+          + (subcategoria ? `&subcategoria=${encodeURIComponent(subcategoria)}` : '')
+          + (categoria ? `&categoria=${encodeURIComponent(categoria)}` : ''),
       });
     }
+
+    // En breadcrumb mostramos el nombre de familia (sin forzar código)
     const itemLabel = _bcCleanText(item) || _bcFormatItemLabel(item, codigo);
     if (itemLabel) {
       crumbs.push({
         label: itemLabel,
         href: `${productosUrl}?item=${encodeURIComponent(itemLabel)}`
-              + (codigo ? `&codigo=${encodeURIComponent(codigo)}` : '')
-              + (subsubcategoria ? `&subsubcategoria=${encodeURIComponent(subsubcategoria)}` : '')
-              + (subcategoria ? `&subcategoria=${encodeURIComponent(subcategoria)}` : '')
-              + (categoria    ? `&categoria=${encodeURIComponent(categoria)}`       : ''),
+          + (codigo ? `&codigo=${encodeURIComponent(codigo)}` : '')
+          + (subsubcategoria ? `&subsubcategoria=${encodeURIComponent(subsubcategoria)}` : '')
+          + (subcategoria ? `&subcategoria=${encodeURIComponent(subcategoria)}` : '')
+          + (categoria ? `&categoria=${encodeURIComponent(categoria)}` : ''),
       });
     }
+
     if (productName) crumbs.push({ label: productName, href: null });
     return crumbs;
   }
@@ -4339,21 +4364,25 @@ function initProductBreadcrumb() {
     }).join('');
   }
 
-  const initialName = (selectedProduct && getProductDisplayName(selectedProduct)) || '';
+  let initialName = '';
+  if (selectedProduct && selectedProduct.name) initialName = selectedProduct.name;
   render(initialName);
 
   const nameEl = document.getElementById('product-name');
   if (nameEl) {
     const tryRender = () => {
       const txt = _bcCleanText(nameEl.textContent);
-      if (txt && !/^loading/i.test(txt) && !/^cargando/i.test(txt)) {
+      if (txt && !/^cargando/i.test(txt)) {
         render(txt);
         return true;
       }
       return false;
     };
+
     if (!tryRender()) {
-      const obs = new MutationObserver(() => { if (tryRender()) obs.disconnect(); });
+      const obs = new MutationObserver(() => {
+        if (tryRender()) obs.disconnect();
+      });
       obs.observe(nameEl, { childList: true, characterData: true, subtree: true });
       setTimeout(() => obs.disconnect(), 10000);
     }
