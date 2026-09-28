@@ -68,9 +68,17 @@ function buildProductUrl(p) {
   if (!modelRaw) {
     const cleaned = String(p.name || "").replace(/[™®©]/g, " ").replace(/\s+/g, " ").trim();
     const m =
+      cleaned.match(/\b(\d{1,4}(?:-[A-Za-z][A-Za-z0-9]{0,9}){1,4})\b/) ||
       cleaned.match(/\b([A-Za-z]{1,8}-?\d{2,6}[A-Za-z0-9-]{0,16})\b/) ||
       cleaned.match(/\b(\d{3,6}[A-Za-z]{1,6}\d{0,4}[A-Za-z0-9-]{0,12})\b/);
     modelRaw = (m && m[1]) || "";
+    if (!modelRaw) {
+      const token = cleaned
+        .split(/[\s,/|]+/)
+        .map((t) => t.replace(/[^A-Za-z0-9-]/g, ""))
+        .find((t) => /[A-Za-z]/.test(t) && /\d/.test(t) && t.length >= 3 && t.length <= 28);
+      modelRaw = token || "";
+    }
   }
   if (!modelRaw) {
     const code = String(p.sku || p.cf_codigo || p.codigo || p.code || "").trim();

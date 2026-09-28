@@ -59,6 +59,7 @@ function extractModelFromName(name) {
   if (!cleaned) return "";
 
   const patterns = [
+    /\b(\d{1,4}(?:-[A-Za-z][A-Za-z0-9]{0,9}){1,4})\b/,
     /\b([A-Za-z]{1,8}-?\d{2,6}[A-Za-z0-9-]{0,16})\b/,
     /\b(\d{3,6}[A-Za-z]{1,6}\d{0,4}[A-Za-z0-9-]{0,12})\b/,
   ];
@@ -1241,7 +1242,7 @@ async function cargarProductoPorSlug() {
 
   if (!slug) {
     const shortMatch = window.location.pathname.match(
-      /^\/producto\/(.+?)\/?$/
+      /^\/product(?:o)?\/(.+?)\/?$/
     );
     if (shortMatch) slug = decodeURIComponent(shortMatch[1]);
   }
@@ -1546,11 +1547,13 @@ function setupSearch() {
 
     const filtrados = allProducts.filter(p => {
       const name = normalizar(p.name || "");
-      const marca = normalizar(p.cf_marca || "");
+      const nameEn = normalizar(p.cf_item || p.nameEn || "");
+      const marca = normalizar(p.cf_marca || p.brand || "");
       const sku = normalizar(p.sku || "");
 
       return palabras.every(palabra =>
         name.includes(palabra) ||
+        nameEn.includes(palabra) ||
         marca.includes(palabra) ||
         sku.includes(palabra)
       );

@@ -150,6 +150,7 @@ function extractModelFromName(name) {
   if (!cleaned) return "";
 
   const patterns = [
+    /\b(\d{1,4}(?:-[A-Za-z][A-Za-z0-9]{0,9}){1,4})\b/,
     /\b([A-Za-z]{1,8}-?\d{2,6}[A-Za-z0-9-]{0,16})\b/,
     /\b(\d{3,6}[A-Za-z]{1,6}\d{0,4}[A-Za-z0-9-]{0,12})\b/,
   ];
@@ -350,6 +351,15 @@ function findProductByPathSegments(products, brand, model, category) {
     return segs.brand === b && segs.model === m;
   });
   if (byBrandModel) return byBrandModel;
+
+  const byBrandSku = products.find((product) => {
+    const segs = buildProductPathSegments(product);
+    if (segs.brand !== b) return false;
+    const skuSlug = slugifyProductText(product.sku);
+    const itemSlug = slugifyProductText(product.item_id || product.id);
+    return skuSlug === m || itemSlug === m;
+  });
+  if (byBrandSku) return byBrandSku;
 
   const byModel = products.filter((product) => {
     const segs = buildProductPathSegments(product);

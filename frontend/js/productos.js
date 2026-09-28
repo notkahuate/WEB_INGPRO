@@ -222,9 +222,17 @@ function buildProductSlug(product) {
   if (!modelRaw) {
     const cleaned = String(product.name || '').replace(/[™®©]/g, ' ').replace(/\s+/g, ' ').trim();
     const m =
+      cleaned.match(/\b(\d{1,4}(?:-[A-Za-z][A-Za-z0-9]{0,9}){1,4})\b/) ||
       cleaned.match(/\b([A-Za-z]{1,8}-?\d{2,6}[A-Za-z0-9-]{0,16})\b/) ||
       cleaned.match(/\b(\d{3,6}[A-Za-z]{1,6}\d{0,4}[A-Za-z0-9-]{0,12})\b/);
     modelRaw = (m && m[1]) || '';
+    if (!modelRaw) {
+      const token = cleaned
+        .split(/[\s,/|]+/)
+        .map((t) => t.replace(/[^A-Za-z0-9-]/g, ''))
+        .find((t) => /[A-Za-z]/.test(t) && /\d/.test(t) && t.length >= 3 && t.length <= 28);
+      modelRaw = token || '';
+    }
   }
   if (!modelRaw) {
     const code = String(product.sku || product.cf_codigo || product.codigo || product.code || '').trim();
@@ -3247,7 +3255,7 @@ function _productCardHTML(product) {
   const imageHtml = product.image
     ? `<img src="${product.image}" alt="${escapeHtml(product.name)}" loading="lazy" decoding="async" onerror="this.onerror=null;this.style.display='none';this.parentElement.classList.add('no-img');">`
     : `<div class="product-image-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg></div>`;
-  return `<a class="product-card" href="${escapeHtml(productUrl)}" data-pid="${escapeHtml(product.id)}">` +
+  return `<a class="product-card" href="${escapeHtml(productUrl)}" data-pid="${escapeHtml(product.id || product.item_id || '')}">` +
     `<div class="product-image">${imageHtml}</div>` +
     `<div class="product-content"><div class="product-brand"><div class="product-brand-logo" style="background:${brandColor}">${escapeHtml(initials)}</div>` +
     `<span class="product-brand-name">${escapeHtml(brandName)}</span></div>` +
@@ -3285,8 +3293,8 @@ function renderProducts() {
       if (!card) return;
       const pid = card.dataset.pid;
       const product =
-        filteredProducts.find((p) => String(p.id) === pid) ||
-        allProducts.find((p) => String(p.id) === pid);
+        filteredProducts.find((p) => String(p.id) === pid || String(p.item_id) === pid) ||
+        allProducts.find((p) => String(p.id) === pid || String(p.item_id) === pid);
       if (!product) return;
       try {
         localStorage.setItem(
