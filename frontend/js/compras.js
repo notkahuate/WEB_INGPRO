@@ -3784,9 +3784,25 @@ function renderMarkdownBasic(text) {
   return html.join('');
 }
 
+function pickCmsLocalizedText(esValue, enValue) {
+  const es = String(esValue || "").trim();
+  const en = String(enValue || "").trim();
+  if (COMPRAS_IS_ENGLISH) return en || es;
+  return es || en;
+}
+
+function isGenericCmsSectionTitle(titulo) {
+  return /^(informaci[oó]n(_en)?|information|info|seccion|secci[oó]n|section)$/i.test(
+    String(titulo || "").trim()
+  );
+}
+
 function renderCmsSeccionesCard(seccion, index) {
   const hasImages = Array.isArray(seccion.imagenes) && seccion.imagenes.length > 0;
-  const title = parseCmsTitle(seccion.titulo);
+  const rawTitle = pickCmsLocalizedText(seccion.titulo, seccion.titulo_en);
+  const bodyText = pickCmsLocalizedText(seccion.informacion, seccion.informacion_en);
+  const title = parseCmsTitle(rawTitle);
+  const showHeader = rawTitle && !isGenericCmsSectionTitle(rawTitle);
   const imagesHtml = hasImages
     ? `<div class="cms-seccion-gallery${seccion.imagenes.length === 1 ? ' cms-seccion-gallery--single' : ''}">` +
       seccion.imagenes
@@ -3800,9 +3816,9 @@ function renderCmsSeccionesCard(seccion, index) {
       `</div>`
     : '';
 
-  const isHtml = looksLikeCmsHtml(seccion.informacion);
-  const infoHtml = seccion.informacion
-    ? `<div class="cms-seccion-body content-text${isHtml ? ' cms-seccion-body--html' : ''}">${renderCmsSectionBody(seccion.informacion)}</div>`
+  const isHtml = looksLikeCmsHtml(bodyText);
+  const infoHtml = bodyText
+    ? `<div class="cms-seccion-body content-text${isHtml ? ' cms-seccion-body--html' : ''}">${renderCmsSectionBody(bodyText)}</div>`
     : '';
 
   const layoutClass = hasImages
@@ -3813,17 +3829,19 @@ function renderCmsSeccionesCard(seccion, index) {
 
   return (
     `<article class="cms-seccion-card${altClass}${htmlClass}">` +
-    `<header class="cms-seccion-header">` +
-    (title.number
-      ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`
+    (showHeader
+      ? `<header class="cms-seccion-header">` +
+        (title.number
+          ? `<span class="cms-seccion-kicker" aria-hidden="true">${escapeHtml(title.number)}</span>`
+          : '') +
+        `<div class="cms-seccion-heading">` +
+        `<h3 class="cms-seccion-title">${escapeHtml(title.heading)}</h3>` +
+        (title.subtitle
+          ? `<p class="cms-seccion-subtitle">${escapeHtml(title.subtitle)}</p>`
+          : '') +
+        `</div>` +
+        `</header>`
       : '') +
-    `<div class="cms-seccion-heading">` +
-    `<h3 class="cms-seccion-title">${escapeHtml(title.heading)}</h3>` +
-    (title.subtitle
-      ? `<p class="cms-seccion-subtitle">${escapeHtml(title.subtitle)}</p>`
-      : '') +
-    `</div>` +
-    `</header>` +
     `<div class="${layoutClass}">` +
     imagesHtml +
     infoHtml +
@@ -3857,12 +3875,19 @@ function normalizeStrapiSecciones(payload) {
 
       return {
         id: entry?.id || attrs.id,
-        titulo: attrs.titulo || '',
-        informacion: attrs.informacion || '',
+        titulo: attrs.titulo || attrs.title || '',
+        titulo_en: attrs.titulo_en || attrs.title_en || '',
+        informacion: attrs.informacion || attrs.information || '',
+        informacion_en: attrs.informacion_en || attrs.information_en || '',
         orden: Number(attrs.orden) || 0,
         imagenes,
       };
     })
+    .filter((seccion) =>
+      pickCmsLocalizedText(seccion.informacion, seccion.informacion_en) ||
+      pickCmsLocalizedText(seccion.titulo, seccion.titulo_en) ||
+      (seccion.imagenes && seccion.imagenes.length)
+    )
     .sort((a, b) => a.orden - b.orden);
 }
 
